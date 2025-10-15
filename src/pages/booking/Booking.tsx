@@ -90,7 +90,7 @@ const Booking = () => {
     setError(null);
     
     try {
-      const response = await axios.get('http://pilihotel-booking.test/api/padel');
+      const response = await axios.get('https://pilihotel.com/api/padel');
       const convertedData = convertApiResponse(response.data);
       setBookings(convertedData);
     } catch (err) {
