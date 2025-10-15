@@ -776,3 +776,8 @@ span.flatpickr-weekday,
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
 }
+
+/* Z-index tinggi untuk popper datepicker agar tidak tertutup sticky table */
+.datepicker-popper-z {
+  z-index: 1050 !important;
+}

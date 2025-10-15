@@ -1,83 +1,38 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
-import { Indonesian } from "flatpickr/dist/l10n/id.js";
 
 dayjs.locale("id");
 
-interface FlatpickrInputProps {
+interface DateInputProps {
   value: string;
   onChange: (dateStr: string) => void;
-  placeholder?: string;
   className?: string;
 }
 
-const FlatpickrInput: React.FC<FlatpickrInputProps> = ({
-  value,
-  onChange,
-  placeholder = "Pilih tanggal",
-  className = "",
-}) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const fpInstanceRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (!inputRef.current || fpInstanceRef.current) return;
-
-    fpInstanceRef.current = flatpickr(inputRef.current, {
-      dateFormat: "Y-m-d",
-      defaultDate: value,
-      locale: Indonesian,
-      onChange: (selectedDates) => {
-        if (selectedDates.length > 0) {
-          const formattedDate = dayjs(selectedDates[0]).format("YYYY-MM-DD");
-          onChange(formattedDate);
-        }
-      },
-      clickOpens: true,
-      static: false,
-    });
-
-    return () => {
-      if (fpInstanceRef.current) {
-        fpInstanceRef.current.destroy();
-        fpInstanceRef.current = null;
-      }
-    };
-  }, []); // Empty dependency array - only initialize once
-
-  // Update value separately when it changes
-  useEffect(() => {
-    if (fpInstanceRef.current && value) {
-      fpInstanceRef.current.setDate(value, false);
-    }
-  }, [value]);
-
+const DateInput: React.FC<DateInputProps> = ({ value, onChange, className = "" }) => {
+  // value is string (YYYY-MM-DD), react-datepicker expects Date
+  const dateValue = value ? new Date(value) : null;
   return (
-    <div ref={containerRef} className="relative w-full">
-      <input
-        ref={inputRef}
-        type="text"
-        placeholder={placeholder}
-        className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-10 text-sm sm:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 ${className}`}
+    <div className="relative w-full mb-3 sm:mb-0">
+      <DatePicker
+        selected={dateValue}
+        onChange={(date: Date | null) => {
+          if (date) {
+            onChange(dayjs(date).format("YYYY-MM-DD"));
+          }
+        }}
+        dateFormat="yyyy-MM-dd"
+        className={`block w-full px-4 py-3 text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-400 dark:hover:border-gray-500 cursor-pointer ${className}`}
+        calendarClassName="!z-50"
+        popperClassName="datepicker-popper-z"
+        popperPlacement="top"
+        showPopperArrow={false}
+        autoComplete="off"
       />
-      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none z-10">
-        <svg
-          className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 dark:text-gray-500"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fillRule="evenodd"
-            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-            clipRule="evenodd"
-          />
-        </svg>
-      </div>
     </div>
   );
 };
@@ -166,79 +121,82 @@ const Booking = () => {
   return (
     <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        {/* Header Section */}
+        {/* Header & Filter Section */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 sm:p-5 border border-gray-200 dark:border-gray-700">
-          <div className="space-y-4 sm:space-y-5">
-            <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3">
-                📅 Jadwal Booking Kindy Padel
-              </h1>
-              <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-8">
+            {/* Left: Judul, deskripsi, legend */}
+            <div className="flex-1 min-w-[220px]">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-flex items-center justify-center text-blue-500 text-2xl md:text-3xl">
+                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="#e0e7ff"/><rect x="7" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="15" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="3" y="9" width="18" height="2" fill="#6366f1"/><rect x="7" y="13" width="2" height="2" rx="1" fill="#6366f1"/><rect x="11" y="13" width="2" height="2" rx="1" fill="#6366f1"/><rect x="15" y="13" width="2" height="2" rx="1" fill="#6366f1"/></svg>
+                </span>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Jadwal Booking Padel</h1>
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-300 mb-3">Kelola jadwal lapangan padel dengan mudah</div>
+              <div className="flex gap-4 items-center mb-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded"></div>
-                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                    Kosong
-                  </span>
+                  <div className="w-4 h-4 bg-green-500 rounded"></div>
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Kosong</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-red-500 rounded"></div>
-                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                    Reserved
-                  </span>
+                  <div className="w-4 h-4 bg-red-500 rounded"></div>
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Reserved</span>
                 </div>
               </div>
             </div>
-
-            {/* Filters */}
-            <div className="flex flex-col gap-3 sm:gap-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                    📅 Tanggal Mulai
+            {/* Right: Filter tanggal & tombol */}
+            <div className="flex flex-col md:flex-row md:items-end gap-3 md:gap-4 w-full md:w-auto">
+              <div className="flex flex-col md:flex-row gap-3 md:gap-4 w-full md:w-auto">
+                {/* Start Date */}
+                <div className="flex flex-col w-full md:w-44">
+                  <label className="flex items-center gap-1 text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="#e0e7ff"/><rect x="7" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="15" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="3" y="9" width="18" height="2" fill="#6366f1"/></svg>
+                    Tanggal Mulai
                   </label>
-                  <FlatpickrInput value={startDate} onChange={setStartDate} />
+                  <DateInput value={startDate} onChange={setStartDate} />
                 </div>
-                <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                    📅 Tanggal Selesai
+                {/* End Date */}
+                <div className="flex flex-col w-full md:w-44">
+                  <label className="flex items-center gap-1 text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="#e0e7ff"/><rect x="7" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="15" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="3" y="9" width="18" height="2" fill="#6366f1"/></svg>
+                    Tanggal Selesai
                   </label>
-                  <FlatpickrInput value={endDate} onChange={setEndDate} />
+                  <DateInput value={endDate} onChange={setEndDate} />
                 </div>
               </div>
               <button
                 onClick={fetchBookings}
                 disabled={loading}
-                className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm sm:text-base font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+                className="w-full md:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm sm:text-base font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
               >
-                {loading ? (
-                  <>
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Loading...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-                    </svg>
-                    <span>Refresh Data</span>
-                  </>
-                )}
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                </svg>
+                <span>{loading ? 'Loading...' : 'Refresh Data'}</span>
               </button>
             </div>
           </div>
         </div>
 
+
         {/* Error Message */}
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 sm:p-4">
             <div className="flex items-start gap-2">
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              <svg
+                className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
               </svg>
-              <span className="text-xs sm:text-sm text-red-800 dark:text-red-200">{error}</span>
+              <span className="text-xs sm:text-sm text-red-800 dark:text-red-200">
+                {error}
+              </span>
             </div>
           </div>
         )}
@@ -250,7 +208,9 @@ const Booking = () => {
               <thead>
                 <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600">
                   <th className="bg-orange-500 text-white py-2 sm:py-3 px-2 sm:px-4 text-center sticky left-0 z-20 min-w-[90px] sm:min-w-[120px] border-r border-orange-400 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">
-                    <span className="text-xs sm:text-sm md:text-base font-semibold">Jam</span>
+                    <span className="text-xs sm:text-sm md:text-base font-semibold">
+                      Jam
+                    </span>
                   </th>
                   {dates.map((date) => (
                     <th
@@ -280,7 +240,9 @@ const Booking = () => {
                     }
                   >
                     <td className="bg-orange-100 dark:bg-orange-900 border-r border-orange-200 text-center font-semibold sticky left-0 z-10 py-2 sm:py-2.5 px-2 sm:px-3 text-[10px] sm:text-xs md:text-sm shadow-[2px_0_5px_rgba(0,0,0,0.05)]">
-                      <span className="font-mono whitespace-nowrap">{time}</span>
+                      <span className="font-mono whitespace-nowrap">
+                        {time}
+                      </span>
                     </td>
                     {dates.map((date) => {
                       const isBooked = !!getBookingStatus(date, time);
