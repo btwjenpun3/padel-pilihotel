@@ -134,7 +134,7 @@ const Booking = () => {
     "20:00 - 21:00",
     "21:00 - 22:00",
     "22:00 - 23:00",
-    "23:00 - 00:00",
+    "23:00 - 24:00",
     "00:00 - 01:00",
     "01:00 - 02:00",
     "02:00 - 03:00",
@@ -164,10 +164,10 @@ const Booking = () => {
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                📅 Jadwal Booking Padel
+                📅 Jadwal Booking Kindy Padel
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Kelola jadwal lapangan padel dengan mudah
+              
               </p>
               
      
