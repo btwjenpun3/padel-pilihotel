@@ -46,10 +46,10 @@ const FlatpickrInput: React.FC<FlatpickrInputProps> = ({
         value={value}
         readOnly
         placeholder={placeholder}
-        className={`px-4 py-3 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 ${className}`}
+        className={`w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm sm:text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 ${className}`}
       />
-      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-        <svg className="w-5 h-5 text-gray-400 dark:text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+      <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 pointer-events-none">
+        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 dark:text-gray-500" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
         </svg>
       </div>
@@ -157,60 +157,55 @@ const Booking = () => {
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-all duration-300">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-all duration-300">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
         {/* Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-5 md:p-6 border border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col gap-4 sm:gap-5 md:gap-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 📅 Jadwal Booking Kindy Padel
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
               
-              </p>
-              
-     
-              <div className="flex gap-4 items-center">
+              <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-green-500 rounded"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Kosong</span>
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded"></div>
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Kosong</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-red-500 rounded"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Reserved</span>
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 bg-red-500 rounded"></div>
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Reserved</span>
                 </div>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                
-                </span>
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 items-end">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  📅 Tanggal Mulai
-                </label>
-                <FlatpickrInput 
-                  value={startDate} 
-                  onChange={setStartDate}
-                  className="w-48"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  📅 Tanggal Selesai
-                </label>
-                <FlatpickrInput 
-                  value={endDate} 
-                  onChange={setEndDate}
-                  className="w-48"
-                />
+            <div className="flex flex-col gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="space-y-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                    📅 Tanggal Mulai
+                  </label>
+                  <FlatpickrInput 
+                    value={startDate} 
+                    onChange={setStartDate}
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                    📅 Tanggal Selesai
+                  </label>
+                  <FlatpickrInput 
+                    value={endDate} 
+                    onChange={setEndDate}
+                    className="w-full"
+                  />
+                </div>
               </div>
               <button 
                 onClick={refreshData}
                 disabled={loading}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm sm:text-base font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -230,91 +225,93 @@ const Booking = () => {
 
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 sm:p-4">
             <div className="flex items-center">
-              <svg className="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-              <span className="text-red-800 dark:text-red-200">{error}</span>
+              <span className="text-xs sm:text-sm text-red-800 dark:text-red-200">{error}</span>
             </div>
           </div>
         )}
 
 
         <div className="shadow-xl rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="overflow-x-auto">
-            <div className="min-w-[1000px]">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600">
-                    <th className="bg-orange-500 dark:bg-orange-600 text-white py-4 px-4 font-semibold text-left sticky left-0 z-20 min-w-[140px] border-r border-orange-400">
-                      <div className="flex items-center justify-center">
-                        <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                        </svg>
-                        Jam
-                      </div>
-                    </th>
-                    {dates.map((date) => (
-                      <th
-                        key={date.format("YYYY-MM-DD")}
-                        className="bg-blue-500 dark:bg-blue-600 text-white py-4 px-3 font-semibold text-center border-r border-blue-400 dark:border-blue-500 min-w-[160px]"
-                      >
-                        <div className="space-y-1">
-                          <div className="font-bold text-sm">
-                            {date.format("dddd")}
-                          </div>
-                          <div className="text-xs opacity-90">
-                            {date.format("DD MMM YYYY")}
-                          </div>
+          <div className="overflow-x-auto -mx-3 sm:mx-0">
+            <div className="inline-block min-w-full align-middle">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600">
+                      <th className="bg-orange-500 dark:bg-orange-600 text-white py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 font-semibold text-left sticky left-0 z-20 min-w-[80px] sm:min-w-[100px] md:min-w-[140px] border-r border-orange-400">
+                        <div className="flex items-center justify-center">
+                          <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mr-1 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-xs sm:text-sm md:text-base">Jam</span>
                         </div>
                       </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {times.map((time, index) => (
-                    <tr key={time} className={index % 2 === 0 ? "bg-gray-50 dark:bg-gray-800" : "bg-white dark:bg-gray-750"}>
-                      <td className="bg-orange-100 dark:bg-orange-900 border-r border-orange-200 dark:border-orange-700 font-semibold text-gray-800 dark:text-gray-200 sticky left-0 z-10 py-3 px-4 text-center">
-                        <div className="text-sm font-mono">
-                          {time}
-                        </div>
-                      </td>
-                      {dates.map((date) => {
-                        const bookingStatus = getBookingStatus(date, time);
-                        const isBooked = !!bookingStatus;
-                   
-                        return (
-                          <td
-                            key={date.format("YYYY-MM-DD") + time}
-                            className="border-r border-b border-gray-200 dark:border-gray-600 p-2"
-                          >
-                            <div 
-                              className={`h-12 flex items-center justify-center rounded-md text-sm font-medium transition-all duration-200 ${
-                                isBooked 
-                                  ? 'bg-red-500 hover:bg-red-600 text-white shadow-md' 
-                                  : 'bg-green-500 hover:bg-green-600 text-white shadow-md'
-                              }`}
-                            >
-                              {isBooked ? (
-                                <div className="text-center px-2">
-                                  <div className="font-semibold text-xs">RESERVED</div>
-                            
-                                </div>
-                              ) : (
-                                <div className="text-center">
-                                  <div className="font-semibold">KOSONG</div>
-                                  <div className="text-xs opacity-75">Tersedia</div>
-                                </div>
-                              )}
+                      {dates.map((date) => (
+                        <th
+                          key={date.format("YYYY-MM-DD")}
+                          className="bg-blue-500 dark:bg-blue-600 text-white py-2 sm:py-3 md:py-4 px-2 sm:px-3 font-semibold text-center border-r border-blue-400 dark:border-blue-500 min-w-[120px] sm:min-w-[140px] md:min-w-[160px]"
+                        >
+                          <div className="space-y-0.5 sm:space-y-1">
+                            <div className="font-bold text-xs sm:text-sm">
+                              {date.format("dddd")}
                             </div>
-                          </td>
-                        );
-                      })}
+                            <div className="text-[10px] sm:text-xs opacity-90">
+                              {date.format("DD MMM YYYY")}
+                            </div>
+                          </div>
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {times.map((time, index) => (
+                      <tr key={time} className={index % 2 === 0 ? "bg-gray-50 dark:bg-gray-800" : "bg-white dark:bg-gray-750"}>
+                        <td className="bg-orange-100 dark:bg-orange-900 border-r border-orange-200 dark:border-orange-700 font-semibold text-gray-800 dark:text-gray-200 sticky left-0 z-10 py-2 sm:py-3 px-2 sm:px-3 md:px-4 text-center">
+                          <div className="text-[10px] sm:text-xs md:text-sm font-mono whitespace-nowrap">
+                            {time}
+                          </div>
+                        </td>
+                        {dates.map((date) => {
+                          const bookingStatus = getBookingStatus(date, time);
+                          const isBooked = !!bookingStatus;
+                     
+                          return (
+                            <td
+                              key={date.format("YYYY-MM-DD") + time}
+                              className="border-r border-b border-gray-200 dark:border-gray-600 p-1 sm:p-1.5 md:p-2"
+                            >
+                              <div 
+                                className={`h-10 sm:h-11 md:h-12 flex items-center justify-center rounded-md text-xs sm:text-sm font-medium transition-all duration-200 ${
+                                  isBooked 
+                                    ? 'bg-red-500 hover:bg-red-600 text-white shadow-md' 
+                                    : 'bg-green-500 hover:bg-green-600 text-white shadow-md'
+                                }`}
+                              >
+                                {isBooked ? (
+                                  <div className="text-center px-1 sm:px-2">
+                                    <div className="font-semibold text-[10px] sm:text-xs">RESERVED</div>
+                              
+                                  </div>
+                                ) : (
+                                  <div className="text-center px-1">
+                                    <div className="font-semibold text-[10px] sm:text-xs md:text-sm">KOSONG</div>
+                                    <div className="text-[9px] sm:text-xs opacity-75 hidden sm:block">Tersedia</div>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
