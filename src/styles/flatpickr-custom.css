@@ -5,6 +5,16 @@
   border: 1px solid #e5e7eb;
 }
 
+/* Hide the original input when altInput is used */
+.flatpickr-input[readonly] {
+  display: none !important;
+}
+
+/* Style the alt input (visible one) */
+input.flatpickr-input.flatpickr-mobile {
+  display: block !important;
+}
+
 .dark .flatpickr-calendar {
   background: #374151;
   border-color: #4b5563;
