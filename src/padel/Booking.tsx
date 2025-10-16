@@ -130,7 +130,7 @@ const Booking = () => {
                 <span className="inline-flex items-center justify-center text-blue-500 text-2xl md:text-3xl">
                   <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="#e0e7ff"/><rect x="7" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="15" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="3" y="9" width="18" height="2" fill="#6366f1"/><rect x="7" y="13" width="2" height="2" rx="1" fill="#6366f1"/><rect x="11" y="13" width="2" height="2" rx="1" fill="#6366f1"/><rect x="15" y="13" width="2" height="2" rx="1" fill="#6366f1"/></svg>
                 </span>
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Jadwal Booking Padel</h1>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Jadwal Booking Kindy Padel</h1>
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-300 mb-3"></div>
               <div className="flex gap-4 items-center mb-1">
