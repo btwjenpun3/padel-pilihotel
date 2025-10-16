@@ -132,7 +132,7 @@ const Booking = () => {
                 </span>
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Jadwal Booking Padel</h1>
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-300 mb-3">Kelola jadwal lapangan padel dengan mudah</div>
+              <div className="text-sm text-gray-500 dark:text-gray-300 mb-3"></div>
               <div className="flex gap-4 items-center mb-1">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-green-500 rounded"></div>
@@ -156,7 +156,7 @@ const Booking = () => {
                   <DateInput value={startDate} onChange={setStartDate} />
                 </div>
                 {/* End Date */}
-                <div className="flex flex-col w-full md:w-44">
+                <div className="flex flex-col w-full md:w-auto">
                   <label className="flex items-center gap-1 text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">
                     <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="#e0e7ff"/><rect x="7" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="15" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="3" y="9" width="18" height="2" fill="#6366f1"/></svg>
                     Tanggal Selesai
@@ -203,7 +203,7 @@ const Booking = () => {
 
         {/* Booking Table */}
         <div className="shadow-xl rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="overflow-x-auto touch-pan-x scroll-smooth [-webkit-overflow-scrolling:touch]">
+          <div className="overflow-x-auto scroll-smooth">
             <table className="w-full min-w-[800px] border-collapse">
               <thead>
                 <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600">
