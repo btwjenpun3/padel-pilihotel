@@ -10,7 +10,7 @@ import {
 
 
 } from "../icons";
-import { GiTennisCourt } from "react-icons/gi";
+
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
 
