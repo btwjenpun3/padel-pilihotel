@@ -10,6 +10,7 @@ import {
 
 
 } from "../icons";
+import { GiTennisCourt } from "react-icons/gi";
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
 
@@ -42,18 +43,22 @@ const navItems: NavItem[] = [
   //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
   // },
 
-
-   {
+  {
     icon: <CalenderIcon />,
-    name: "Booking",
-    path: "/booking",
+    name: "Jadwal Booking",
+    path: "/jadwal-booking",
   },
+
+  // {
+  //   icon: <GiTennisCourt />,
+  //   name: "Booking Lapangan",
+  //   path: "/booking",
+  // },
   //   name: "Forms",
   //   icon: <ListIcon />,
   //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
   // },
 
- 
   // {
   //   name: "Pages",
   //   icon: <PageIcon />,
