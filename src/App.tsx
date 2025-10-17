@@ -20,7 +20,9 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 
-import Booking from "./padel/Booking";
+
+import JadwalBooking from "./pages/padel/JadwalBooking";
+import Booking from "./pages/padel/Booking";
 
 export default function App() {
   return (
@@ -32,17 +34,13 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
 
+            <Route path="/jadwal-booking" element={<JadwalBooking />} />
             <Route path="/booking" element={<Booking />} />
-
-        
           </Route>
 
           {/* Auth Layout */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-
-
-
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
