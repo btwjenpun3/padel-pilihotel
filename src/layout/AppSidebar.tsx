@@ -46,7 +46,7 @@ const navItems: NavItem[] = [
   {
     icon: <CalenderIcon />,
     name: "Jadwal Booking",
-    path: "/jadwal-booking",
+    path: "/booking",
   },
 
   // {
