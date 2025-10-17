@@ -145,6 +145,30 @@ const [startDate, setStartDate] = useState<string>(dayjs().format("YYYY-MM-DD"))
               ))}
             </select>
           </div>
+
+          <div className="form-control mb-4">
+            <label className="block mb-2 text-gray-700 dark:text-gray-300">
+              Nama Rekening Pengirim
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="block w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              placeholder="Masukkan nama pengirim sesuai rekening"
+            />
+          </div>
+
+          <div className="form-control mb-4">
+            <label className="block mb-2 text-gray-700 dark:text-gray-300">
+              Sudah Bayar atau Belum? 
+            </label>
+            <select className="block w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+              <option value="test">belum bayar</option>
+              <option value="test">sudah bayar</option>
+            </select>
+          </div>
+
           <button
             type="submit"
             className="px-4 py-2 bg-blue-600 text-white rounded-lg"

@@ -21,8 +21,8 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
 
-            <Route path="/jadwal-booking" element={<JadwalBooking />} />
-            <Route path="/booking" element={<Booking />} />
+            <Route path="/booking" element={<JadwalBooking />} />
+            {/* <Route path="/booking" element={<Booking />} /> */}
           </Route>
 
           {/* Auth Layout */}
