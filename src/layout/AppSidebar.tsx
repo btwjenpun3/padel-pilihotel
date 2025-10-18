@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-import { GiTennisCourt } from "react-icons/gi";
+
 // Assume these icons are imported from an icon library
 import {
   CalenderIcon,
