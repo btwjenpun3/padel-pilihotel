@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Phone,  CalendarDays, Instagram } from "lucide-react";
 import { IoTennisballOutline } from "react-icons/io5";
-import padel1 from "../../../public/images/landing-page/lapangan/padel1.jpg"
-import padel2 from "../../../public/images/landing-page/lapangan/padel2.jpeg";
-import padel3 from "../../../public/images/landing-page/lapangan/padel3.jpeg";
-import padel4 from "../../../public/images/landing-page/lapangan/padel4.jpeg";
+import padel1 from "/images/landing-page/lapangan/padel1.jpg"
+import padel2 from "/images/landing-page/lapangan/padel2.jpeg";
+import padel3 from "/images/landing-page/lapangan/padel3.jpeg";
+import padel4 from "/images/landing-page/lapangan/padel4.jpeg";
 const Landing = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
 

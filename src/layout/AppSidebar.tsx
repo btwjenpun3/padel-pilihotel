@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-
+import { GiTennisCourt } from "react-icons/gi";
 // Assume these icons are imported from an icon library
 import {
   CalenderIcon,
   ChevronDownIcon,
-
+ 
   HorizontaLDots,
 
 
@@ -50,11 +50,11 @@ const navItems: NavItem[] = [
     path: "/booking",
   },
 
-  // {
-  //       icon: <GiTennisCourt />,
-//       name: "Booking Lapangan",
-//       path: "/booking",
-//   },
+  {
+        icon: <GiTennisCourt />,
+      name: "Booking Lapangan",
+      path: "/booking-form",
+  },
   //   name: "Forms",
   //   icon: <ListIcon />,
   //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
