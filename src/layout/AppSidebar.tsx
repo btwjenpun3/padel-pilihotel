@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-
+import { GiTennisCourt } from "react-icons/gi";
 // Assume these icons are imported from an icon library
 import {
   CalenderIcon,
@@ -13,6 +13,7 @@ import {
 
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
+import { IoTennisballOutline } from "react-icons/io5";
 
 type NavItem = {
   name: string;
@@ -50,10 +51,10 @@ const navItems: NavItem[] = [
   },
 
   // {
-  //   icon: <GiTennisCourt />,
-  //   name: "Booking Lapangan",
-  //   path: "/booking",
-  // },
+  //       icon: <GiTennisCourt />,
+//       name: "Booking Lapangan",
+//       path: "/booking",
+//   },
   //   name: "Forms",
   //   icon: <ListIcon />,
   //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
@@ -327,16 +328,20 @@ const AppSidebar: React.FC = () => {
                   img.src = "/images/logo/logo-icon.svg";
                 }}
               /> */}
-              <span className="text-lg font-semibold dark:text-white">Kindy Padel</span>
+              <div>
+                <h1 className="text-2xl flex font-bold text-blue-700">
+                  Kindy Padel{" "}
+                  <span className="sm:hidden sm:inline">
+                    <IoTennisballOutline />
+                  </span>
+                </h1>
+              </div>
             </>
           ) : (
             // collapsed: show only small icon
-            <img
-              src="/images/logo/logo-icon.svg"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+            <span className="flex items-center justify-center">
+              <IoTennisballOutline className="w-10 h-10 text-blue-700" />
+            </span>
           )}
         </Link>
       </div>
