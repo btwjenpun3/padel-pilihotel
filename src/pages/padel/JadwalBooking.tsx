@@ -65,9 +65,7 @@ const Booking = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        "http://pilihotel-booking.test/api/padel"
-      );
+      const response = await axios.get("https://pilihotel.com/api/padel");
       const convertedData = convertApiResponse(response.data);
       console.log("Fetched bookings:", convertedData);
       setBookings(convertedData);

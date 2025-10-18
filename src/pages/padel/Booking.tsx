@@ -79,18 +79,22 @@ const JadwalBooking = () => {
     }
 
     try {
-      const response = await axios.post("http://pilihotel-booking.test/api/padel", {
-        booked: booked,
-        start_date: startDate,
-        time_slot: timeSlot,
-        nama_rekening,
-        status_bayar: statusBayar,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
+      const response = await axios.post(
+        "https://pilihotel.com/api/padel",
+        {
+          booked: booked,
+          start_date: startDate,
+          time_slot: timeSlot,
+          nama_rekening,
+          status_bayar: statusBayar,
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
 
       console.log("Booking response:", response.data);
       Swal.fire({
