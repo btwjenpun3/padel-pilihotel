@@ -73,11 +73,11 @@ const JadwalBooking = () => {
       //   "http://pilihotel-booking.test/api/padel"
       // );
       const convertedData = convertApiResponse(response.data);
-      console.log("Fetched bookings:", convertedData);
+
       setBookings(convertedData);
     } catch (err) {
       setError("Gagal memuat data booking");
-      console.error("Error fetching bookings:", err);
+
     } finally {
       setLoading(false);
     }

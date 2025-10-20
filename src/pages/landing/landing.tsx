@@ -46,8 +46,8 @@ const Landing = () => {
             <a href="#about" className="hover:text-blue-600 transition">
               Tentang
             </a>
-            <a href="#facilities" className="hover:text-blue-600 transition">
-              Fasilitas
+            <a href="#gallery" className="hover:text-blue-600 transition">
+              Gallery
             </a>
             <a href="#contact" className="hover:text-blue-600 transition">
               Kontak

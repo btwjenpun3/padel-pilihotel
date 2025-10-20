@@ -48,7 +48,6 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
   const [nama_rekening, setNama_Rekening] = useState<string>("");
   
 
-    console.log("kategori booking:", kategori);
   const [errors, setErrors] = useState<{
     booked?: string;
     startDate?: string;
