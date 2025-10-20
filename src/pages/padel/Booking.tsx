@@ -5,7 +5,9 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router";
+
+import { GiTennisCourt } from "react-icons/gi";
+import { IoWarning } from "react-icons/io5";
 
 dayjs.locale("id");
 const timeOptions: Record<number, string> = {
@@ -35,13 +37,13 @@ const timeOptions: Record<number, string> = {
   4: "04:00 - 05:00",
 };
 
-const JadwalBooking = () => {
-  const navigate = useNavigate(); // Moved useNavigate inside the component
+const Booking = ({fetchBookings}: {fetchBookings: () => void}) => {
+
   const [startDate, setStartDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
   const [timeSlot, setTimeSlot] = useState<number>(5);
   const [booked, setBooked] = useState<string>("");
   const [nama_rekening, setNama_Rekening] = useState<string>("");
-  const [statusBayar, setStatusBayar] = useState<string>("");
+
   const [errors, setErrors] = useState<{ booked?: string; startDate?: string; timeSlot?: string; nama_rekening?: string; statusBayar?: string }>({});
 
   // Removed unused state setter
@@ -56,7 +58,7 @@ const JadwalBooking = () => {
     if (!startDate) newErrors.startDate = "Tanggal main tidak boleh kosong";
     if (!timeSlot) newErrors.timeSlot = "Jam tidak boleh kosong";
     if (!nama_rekening.trim()) newErrors.nama_rekening = "Nama rekening pengirim tidak boleh kosong";
-    if (!statusBayar.trim()) newErrors.statusBayar = "Status pembayaran tidak boleh kosong";
+
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -78,100 +80,177 @@ const JadwalBooking = () => {
       return;
     }
 
-    try {
-      const response = await axios.post(
-        "https://pilihotel.com/api/padel",
-        {
-          booked: booked,
-          start_date: startDate,
-          time_slot: timeSlot,
-          nama_rekening,
-          status_bayar: statusBayar,
+  try {
+    const response = await axios.post(
+      "https://pilihotel.com/api/padel",
+      {
+        booked: booked,
+        start_date: startDate,
+        time_slot: timeSlot,
+        nama_rekening,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
-
-      console.log("Booking response:", response.data);
-      Swal.fire({
-        icon: "success",
-        title: "Booking berhasil!",
-        text: "Slot waktu Anda telah berhasil dibooking.",
-      });
-      navigate("/booking"); // Updated to use navigate
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 409) {
-        Swal.fire({
-          icon: "error",
-          title: "Slot sudah dibooking!",
-          text: "Maaf, slot waktu ini sudah dibooking. Silakan pilih slot lain.",
-        });
-        return;
       }
+    );
 
+    console.log("Booking response:", response.data);
+    Swal.fire({
+      icon: "success",
+      title: "Booking berhasil!",
+      text: "Slot waktu Anda telah berhasil dibooking.",
+    });
+
+    // Refresh data booking
+    fetchBookings();
+
+    // ✅ Reset semua input setelah sukses
+    setBooked("");
+    setStartDate(dayjs().format("YYYY-MM-DD"));
+    setTimeSlot(5);
+    setNama_Rekening("");
+
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 409) {
       Swal.fire({
         icon: "error",
-        title: "Terjadi kesalahan!",
-        text: `Terjadi kesalahan saat submit booking: ${error}`,
+        title: "Slot sudah dibooking!",
+        text: "Maaf, slot waktu ini sudah dibooking. Silakan pilih slot lain.",
       });
+
+      newErrors.timeSlot = "Slot waktu sudah dibooking Pilih Waktu Lain";
+      setErrors(newErrors);
+      return;
     }
+
+    Swal.fire({
+      icon: "error",
+      title: "Terjadi kesalahan!",
+      text: `Terjadi kesalahan saat submit booking: ${error}`,
+    });
+  }
+
+
+
+
+
   };
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
-        Form Booking Kindy Padel
+      <h2 className="text-2xl inline-flex gap-2  font-semibold mb-4 text-gray-800 dark:text-white">
+        Form Booking Kindy Padel{" "}
+        <span className="inline-flex items-center justify-center w-6 h-6 text-gray-700 dark:text-gray-400">
+          <GiTennisCourt />
+        </span>
       </h2>
 
       <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg mb-6">
-        <h3 className="text-lg font-semibold mb-2">Informasi Penting</h3>
+        <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+          Informasi Penting{" "}
+          <span>
+            <IoWarning />
+          </span>
+        </h3>
         <ul className="list-disc pl-5 space-y-2">
-          <li>Apabila sudah melakukan payment maka tidak bisa melakukan cancel/refund.</li>
-          <li>Untuk jadwal yang sudah di reservasi tidak bisa di reschedule.</li>
-          <li>Jika turun hujan sebelum sesi dimulai, maka jadwal bisa di reschedule.</li>
-          <li>Jika sesi sudah berjalan lebih dari 30 menit & terjadi hujan, fee tidak di refund dan tidak bisa di reschedule.</li>
-          <li>Segala kerusakan properti di Kindy Padel akan menjadi tanggung jawab pemain.</li>
+          <li>
+            Apabila sudah melakukan payment maka tidak bisa melakukan
+            cancel/refund.
+          </li>
+          <li>
+            Untuk jadwal yang sudah di reservasi tidak bisa di reschedule.
+          </li>
+          <li>
+            Jika turun hujan sebelum sesi dimulai, maka jadwal bisa di
+            reschedule.
+          </li>
+          <li>
+            Jika sesi sudah berjalan lebih dari 30 menit & terjadi hujan, fee
+            tidak di refund dan tidak bisa di reschedule.
+          </li>
+          <li>
+            Segala kerusakan properti di Kindy Padel akan menjadi tanggung jawab
+            pemain.
+          </li>
+          <li>Jika sudah booking harap segera melakukan pembayaran maksimal 15 menit.</li>
         </ul>
       </div>
 
       <form onSubmit={handleSubmit}>
         {/* Nama Pemesan */}
         <div className="mb-4">
-          <label className="block mb-2 text-gray-700 dark:text-gray-300">Nama Pemesan</label>
+          <label className="block mb-2 text-gray-700 dark:text-gray-300">
+            Nama Pemesan
+          </label>
           <input
+            value={booked}
             type="text"
             placeholder="Masukan Nama Pemesan"
-            onChange={(e) => setBooked(e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-100"
+            onChange={(e) => {
+              setBooked(e.target.value);
+              if (errors.booked && e.target.value.trim()) {
+                setErrors((prev) => ({ ...prev, booked: undefined }));
+              }
+            }}
+            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+              errors.booked
+                ? "border-red-500  dark:bg-red-900/20"
+                : "border-gray-300"
+            }`}
           />
-          {errors.booked && <p className="text-sm text-red-500 mt-1">{errors.booked}</p>}
+          {errors.booked && (
+            <p className="text-sm text-red-500 mt-1">{errors.booked}</p>
+          )}
         </div>
 
         {/* Tanggal */}
         <div className="mb-4">
-          <label className="block mb-2 text-gray-700 dark:text-gray-300">Tanggal Main</label>
+          <label className="block mb-2 text-gray-700 dark:text-gray-300">
+            Tanggal Main
+          </label>
           <DatePicker
             selected={new Date(startDate)}
             onChange={(date: Date | null) => {
-              if (date) setStartDate(dayjs(date).format("YYYY-MM-DD"));
+              if (date) {
+                setStartDate(dayjs(date).format("YYYY-MM-DD"));
+                if (errors.startDate) {
+                  setErrors((prev) => ({ ...prev, startDate: undefined }));
+                }
+              }
             }}
             dateFormat="yyyy-MM-dd"
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-100"
+            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+              errors.startDate
+                ? "border-red-500  dark:bg-red-900/20"
+                : "border-gray-300"
+            }`}
           />
-          {errors.startDate && <p className="text-sm text-red-500 mt-1">{errors.startDate}</p>}
+          {errors.startDate && (
+            <p className="text-sm text-red-500 mt-1">{errors.startDate}</p>
+          )}
         </div>
 
         {/* Jam */}
         <div className="mb-4">
-          <label className="block mb-2 text-gray-700 dark:text-gray-300">Jam</label>
+          <label className="block mb-2 text-gray-700 dark:text-gray-300">
+            Jam
+          </label>
           <select
             value={timeSlot}
-            onChange={(e) => setTimeSlot(Number(e.target.value))}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-100"
+            onChange={(e) => {
+              setTimeSlot(Number(e.target.value));
+              if (errors.timeSlot && e.target.value) {
+                setErrors((prev) => ({ ...prev, timeSlot: undefined }));
+              }
+            }}
+            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+              errors.timeSlot
+                ? "border-red-500  dark:bg-red-900/20"
+                : "border-gray-300"
+            }`}
           >
             {Object.entries(availableSlots).map(([key, label]) => (
               <option key={key} value={Number(key)}>
@@ -179,37 +258,43 @@ const JadwalBooking = () => {
               </option>
             ))}
           </select>
-          {errors.timeSlot && <p className="text-sm text-red-500 mt-1">{errors.timeSlot}</p>}
+          {errors.timeSlot && (
+            <p className="text-sm text-red-500 mt-1">{errors.timeSlot}</p>
+          )}
         </div>
 
         {/* Nama Rekening */}
         <div className="mb-4">
-          <label className="block mb-2 text-gray-700 dark:text-gray-300">Nama Rekening Pengirim</label>
+          <label className="block mb-2 text-gray-700 dark:text-gray-300">
+            Nama Rekening Pengirim
+          </label>
           <input
             type="text"
+            value={nama_rekening}
             placeholder="Pastikan Nama Pengirim Patikan Sesuai"
-            onChange={(e) => setNama_Rekening(e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-100"
+            onChange={(e) => {
+              setNama_Rekening(e.target.value);
+              if (errors.nama_rekening && e.target.value.trim()) {
+                setErrors((prev) => ({ ...prev, nama_rekening: undefined }));
+              }
+            }}
+            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+              errors.nama_rekening
+                ? "border-red-500  dark:bg-red-900/20"
+                : "border-gray-300"
+            }`}
           />
-          {errors.nama_rekening && <p className="text-sm text-red-500 mt-1">{errors.nama_rekening}</p>}
+          {errors.nama_rekening && (
+            <p className="text-sm text-red-500 mt-1">{errors.nama_rekening}</p>
+          )}
         </div>
 
-        {/* Status Bayar */}
-        <div className="mb-4">
-          <label className="block mb-2 text-gray-700 dark:text-gray-300">Status Pembayaran</label>
-          <select
-            value={statusBayar}
-            onChange={(e) => setStatusBayar(e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-100"
-          >
-            <option value="">Pilih status pembayaran</option>
-            <option value="Belum Bayar">Belum Bayar</option>
-            <option value="Sudah Bayar">Sudah Bayar</option>
-          </select>
-          {errors.statusBayar && <p className="text-sm text-red-500 mt-1">{errors.statusBayar}</p>}
-        </div>
 
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+        >
           Book Now
         </button>
       </form>
@@ -217,4 +302,4 @@ const JadwalBooking = () => {
   );
 };
 
-export default JadwalBooking;
+export default Booking;

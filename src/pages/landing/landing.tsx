@@ -161,13 +161,37 @@ const Landing = () => {
                   </ul>
                 </div>
                 {item.title === "Coaching Class" && (
-                  <span className=" ml-4 mt-7  text-left text-gray-500 text-[10px]">
+                  <span className=" ml-4 mb-4 text-left text-gray-500 text-[10px]">
                     *Harga Di atas Sudah Include Coach, Court , Ball
                   </span>
                 )}
-                <a href="/booking" className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto">
-                  Booking Sekarang
-                </a>  
+
+                {item.title === "Court" && (
+                  <a
+                    href="/booking"
+                    className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto"
+                  >
+                    Booking Sekarang
+                  </a>
+                )}
+
+                {item.title === "Coaching Class" && (
+                  <a
+                    href="/booking"
+                    className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto"
+                  >
+                    Booking Sekarang
+                  </a>
+                )}
+
+                {item.title === "Rent Gear" && (
+                  <a
+                    href="https://wa.me/6281320971811"
+                    className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto"
+                  >
+                    Hubungi Sekarang
+                  </a>
+                )}
               </motion.div>
             ))}
           </div>

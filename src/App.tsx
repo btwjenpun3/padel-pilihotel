@@ -9,7 +9,7 @@ import Home from "./pages/Dashboard/Home";
 
 
 import JadwalBooking from "./pages/padel/JadwalBooking";
-import Booking from "./pages/padel/Booking";
+
 // import Booking from "./pages/padel/Booking";
 import Landing from "./pages/landing/landing";
 
@@ -27,7 +27,7 @@ export default function App() {
             <Route index path="/dashboard" element={<Home />} />
 
             <Route path="/booking" element={<JadwalBooking />} />
-            <Route path="/booking-form" element={<Booking />} />
+            {/* <Route path="/booking-form" element={<Booking />} /> */}
           </Route>
 
           {/* Auth Layout */}

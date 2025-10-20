@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
+import Booking from "../padel/Booking";
 
 dayjs.locale("id");
 
@@ -37,7 +38,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, className = "" }
   );
 };
 
-const Booking = () => {
+const JadwalBooking = () => {
   const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(
     dayjs().add(6, "day").format("YYYY-MM-DD")
@@ -66,6 +67,9 @@ const Booking = () => {
     setError(null);
     try {
       const response = await axios.get("https://pilihotel.com/api/padel");
+      // const response = await axios.get(
+      //   "http://pilihotel-booking.test/api/padel"
+      // );
       const convertedData = convertApiResponse(response.data);
       console.log("Fetched bookings:", convertedData);
       setBookings(convertedData);
@@ -132,19 +136,75 @@ const Booking = () => {
             <div className="flex-1 min-w-[220px]">
               <div className="flex items-center gap-2 mb-1">
                 <span className="inline-flex items-center justify-center text-blue-500 text-2xl md:text-3xl">
-                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="#e0e7ff"/><rect x="7" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="15" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="3" y="9" width="18" height="2" fill="#6366f1"/><rect x="7" y="13" width="2" height="2" rx="1" fill="#6366f1"/><rect x="11" y="13" width="2" height="2" rx="1" fill="#6366f1"/><rect x="15" y="13" width="2" height="2" rx="1" fill="#6366f1"/></svg>
+                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+                    <rect
+                      x="3"
+                      y="5"
+                      width="18"
+                      height="16"
+                      rx="3"
+                      fill="#e0e7ff"
+                    />
+                    <rect
+                      x="7"
+                      y="2"
+                      width="2"
+                      height="4"
+                      rx="1"
+                      fill="#6366f1"
+                    />
+                    <rect
+                      x="15"
+                      y="2"
+                      width="2"
+                      height="4"
+                      rx="1"
+                      fill="#6366f1"
+                    />
+                    <rect x="3" y="9" width="18" height="2" fill="#6366f1" />
+                    <rect
+                      x="7"
+                      y="13"
+                      width="2"
+                      height="2"
+                      rx="1"
+                      fill="#6366f1"
+                    />
+                    <rect
+                      x="11"
+                      y="13"
+                      width="2"
+                      height="2"
+                      rx="1"
+                      fill="#6366f1"
+                    />
+                    <rect
+                      x="15"
+                      y="13"
+                      width="2"
+                      height="2"
+                      rx="1"
+                      fill="#6366f1"
+                    />
+                  </svg>
                 </span>
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Jadwal Booking Kindy Padel</h1>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  Jadwal Booking Kindy Padel
+                </h1>
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-300 mb-3"></div>
               <div className="flex gap-4 items-center mb-1">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-green-500 rounded"></div>
-                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Kosong</span>
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                    Kosong
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-red-500 rounded"></div>
-                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Reserved</span>
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                    Reserved
+                  </span>
                 </div>
               </div>
             </div>
@@ -154,7 +214,33 @@ const Booking = () => {
                 {/* Start Date */}
                 <div className="flex flex-col w-full md:w-44">
                   <label className="flex items-center gap-1 text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">
-                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="#e0e7ff"/><rect x="7" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="15" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="3" y="9" width="18" height="2" fill="#6366f1"/></svg>
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                      <rect
+                        x="3"
+                        y="5"
+                        width="18"
+                        height="16"
+                        rx="3"
+                        fill="#e0e7ff"
+                      />
+                      <rect
+                        x="7"
+                        y="2"
+                        width="2"
+                        height="4"
+                        rx="1"
+                        fill="#6366f1"
+                      />
+                      <rect
+                        x="15"
+                        y="2"
+                        width="2"
+                        height="4"
+                        rx="1"
+                        fill="#6366f1"
+                      />
+                      <rect x="3" y="9" width="18" height="2" fill="#6366f1" />
+                    </svg>
                     Tanggal Mulai
                   </label>
                   <DateInput value={startDate} onChange={setStartDate} />
@@ -162,7 +248,33 @@ const Booking = () => {
                 {/* End Date */}
                 <div className="flex flex-col w-full md:w-auto">
                   <label className="flex items-center gap-1 text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">
-                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="#e0e7ff"/><rect x="7" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="15" y="2" width="2" height="4" rx="1" fill="#6366f1"/><rect x="3" y="9" width="18" height="2" fill="#6366f1"/></svg>
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                      <rect
+                        x="3"
+                        y="5"
+                        width="18"
+                        height="16"
+                        rx="3"
+                        fill="#e0e7ff"
+                      />
+                      <rect
+                        x="7"
+                        y="2"
+                        width="2"
+                        height="4"
+                        rx="1"
+                        fill="#6366f1"
+                      />
+                      <rect
+                        x="15"
+                        y="2"
+                        width="2"
+                        height="4"
+                        rx="1"
+                        fill="#6366f1"
+                      />
+                      <rect x="3" y="9" width="18" height="2" fill="#6366f1" />
+                    </svg>
                     Tanggal Selesai
                   </label>
                   <DateInput value={endDate} onChange={setEndDate} />
@@ -173,15 +285,22 @@ const Booking = () => {
                 disabled={loading}
                 className="w-full md:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm sm:text-base font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
               >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                    clipRule="evenodd"
+                  />
                 </svg>
-                <span>{loading ? 'Loading...' : 'Refresh Data'}</span>
+                <span>{loading ? "Loading..." : "Refresh Data"}</span>
               </button>
             </div>
           </div>
         </div>
-
 
         {/* Error Message */}
         {error && (
@@ -269,7 +388,11 @@ const Booking = () => {
                             }`}
                           >
                             <span className="font-semibold px-1">
-                              {isSelesai ? "RESERVED" : isBelumBayar ? "PENDING" : "KOSONG"}
+                              {isSelesai
+                                ? "RESERVED"
+                                : isBelumBayar
+                                ? ""
+                                : "KOSONG"}
                             </span>
                           </div>
                         </td>
@@ -281,9 +404,15 @@ const Booking = () => {
             </table>
           </div>
         </div>
+        <div className="mt-4">
+          <Booking 
+            fetchBookings={fetchBookings}
+          
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-export default Booking;
+export default JadwalBooking;
