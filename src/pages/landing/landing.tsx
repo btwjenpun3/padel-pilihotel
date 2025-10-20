@@ -108,6 +108,7 @@ const Landing = () => {
               {
                 title: "Court",
                 price: " Rp 87.000/jam",
+                link: "/booking/court",
                 features: [
                   { text: "Senin - Minggu", bullet: true },
                   { text: "06:00 AM - 23:00 PM | 175k", bullet: false },
@@ -118,6 +119,7 @@ const Landing = () => {
               },
               {
                 title: "Coaching Class",
+                link: "/booking/coaching",
                 price: " Rp 600.000/jam",
                 features: [
                   { text: "1-2 Orang 600k", bullet: true },
@@ -168,7 +170,7 @@ const Landing = () => {
 
                 {item.title === "Court" && (
                   <a
-                    href="/booking"
+                    href={item.link}
                     className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto"
                   >
                     Booking Sekarang
@@ -177,7 +179,7 @@ const Landing = () => {
 
                 {item.title === "Coaching Class" && (
                   <a
-                    href="/booking"
+                    href={item.link}
                     className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto"
                   >
                     Booking Sekarang

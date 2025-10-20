@@ -37,14 +37,26 @@ const timeOptions: Record<number, string> = {
   4: "04:00 - 05:00",
 };
 
-const Booking = ({fetchBookings}: {fetchBookings: () => void}) => {
 
-  const [startDate, setStartDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
+
+const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, kategori: string }) => {
+  const [startDate, setStartDate] = useState<string>(
+    dayjs().format("YYYY-MM-DD")
+  );
   const [timeSlot, setTimeSlot] = useState<number>(5);
   const [booked, setBooked] = useState<string>("");
   const [nama_rekening, setNama_Rekening] = useState<string>("");
+  
 
-  const [errors, setErrors] = useState<{ booked?: string; startDate?: string; timeSlot?: string; nama_rekening?: string; statusBayar?: string }>({});
+    console.log("kategori booking:", kategori);
+  const [errors, setErrors] = useState<{
+    booked?: string;
+    startDate?: string;
+    timeSlot?: string;
+    nama_rekening?: string;
+    statusBayar?: string;
+    paket?: string;
+  }>({});
 
   // Removed unused state setter
   const [availableSlots] = useState<Record<number, string>>(timeOptions);
@@ -57,8 +69,9 @@ const Booking = ({fetchBookings}: {fetchBookings: () => void}) => {
     if (!booked.trim()) newErrors.booked = "Nama pemesan tidak boleh kosong";
     if (!startDate) newErrors.startDate = "Tanggal main tidak boleh kosong";
     if (!timeSlot) newErrors.timeSlot = "Jam tidak boleh kosong";
-    if (!nama_rekening.trim()) newErrors.nama_rekening = "Nama rekening pengirim tidak boleh kosong";
-
+   
+    if (!nama_rekening.trim())
+      newErrors.nama_rekening = "Nama rekening pengirim tidak boleh kosong";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -80,63 +93,64 @@ const Booking = ({fetchBookings}: {fetchBookings: () => void}) => {
       return;
     }
 
-  try {
-    const response = await axios.post(
-      "https://pilihotel.com/api/padel",
-      {
-        booked: booked,
-        start_date: startDate,
-        time_slot: timeSlot,
-        nama_rekening,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
+
+    if(kategori === "coaching"){
+      kategori = "coaching";
+    }else{
+      kategori = "court";
+    }
+    try {
+      const response = await axios.post(
+        "https://pilihotel.com/api/padel",
+        {
+          booked: booked,
+          start_date: startDate,
+          time_slot: timeSlot,
+          nama_rekening,
+          kategori: kategori,
         },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      console.log("Booking response:", response.data);
+      Swal.fire({
+        icon: "success",
+        title: "Booking berhasil!",
+        text: "Slot waktu Anda telah berhasil dibooking.",
+      });
+      
+      // Refresh data booking
+      fetchBookings();
+
+      // ✅ Reset semua input setelah sukses
+      setBooked("");
+      setStartDate(dayjs().format("YYYY-MM-DD"));
+      setTimeSlot(5);
+      setNama_Rekening("");
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        Swal.fire({
+          icon: "error",
+          title: "Slot sudah dibooking!",
+          text: "Maaf, slot waktu ini sudah dibooking. Silakan pilih slot lain.",
+        });
+
+        newErrors.timeSlot = "Slot waktu sudah dibooking Pilih Waktu Lain";
+        setErrors(newErrors);
+        return;
       }
-    );
 
-    console.log("Booking response:", response.data);
-    Swal.fire({
-      icon: "success",
-      title: "Booking berhasil!",
-      text: "Slot waktu Anda telah berhasil dibooking.",
-    });
-
-    // Refresh data booking
-    fetchBookings();
-
-    // ✅ Reset semua input setelah sukses
-    setBooked("");
-    setStartDate(dayjs().format("YYYY-MM-DD"));
-    setTimeSlot(5);
-    setNama_Rekening("");
-
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 409) {
       Swal.fire({
         icon: "error",
-        title: "Slot sudah dibooking!",
-        text: "Maaf, slot waktu ini sudah dibooking. Silakan pilih slot lain.",
+        title: "Terjadi kesalahan!",
+        text: `Terjadi kesalahan saat submit booking: ${error}`,
       });
-
-      newErrors.timeSlot = "Slot waktu sudah dibooking Pilih Waktu Lain";
-      setErrors(newErrors);
-      return;
     }
-
-    Swal.fire({
-      icon: "error",
-      title: "Terjadi kesalahan!",
-      text: `Terjadi kesalahan saat submit booking: ${error}`,
-    });
-  }
-
-
-
-
-
   };
 
   return (
@@ -175,7 +189,10 @@ const Booking = ({fetchBookings}: {fetchBookings: () => void}) => {
             Segala kerusakan properti di Kindy Padel akan menjadi tanggung jawab
             pemain.
           </li>
-          <li>Jika sudah booking harap segera melakukan pembayaran maksimal 15 menit.</li>
+          <li>
+            Jika sudah booking harap segera melakukan pembayaran maksimal 15
+            menit.
+          </li>
         </ul>
       </div>
 
@@ -263,6 +280,8 @@ const Booking = ({fetchBookings}: {fetchBookings: () => void}) => {
           )}
         </div>
 
+      
+
         {/* Nama Rekening */}
         <div className="mb-4">
           <label className="block mb-2 text-gray-700 dark:text-gray-300">
@@ -288,8 +307,6 @@ const Booking = ({fetchBookings}: {fetchBookings: () => void}) => {
             <p className="text-sm text-red-500 mt-1">{errors.nama_rekening}</p>
           )}
         </div>
-
-
 
         <button
           type="submit"

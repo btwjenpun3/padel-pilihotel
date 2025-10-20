@@ -5,6 +5,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import Booking from "../padel/Booking";
+import { useParams } from "react-router";
 
 dayjs.locale("id");
 
@@ -39,6 +40,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, className = "" }
 };
 
 const JadwalBooking = () => {
+   const { kategori } = useParams();
   const [startDate, setStartDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [endDate, setEndDate] = useState(
     dayjs().add(6, "day").format("YYYY-MM-DD")
@@ -52,8 +54,8 @@ const JadwalBooking = () => {
     const converted: Record<string, string> = {};
     if (apiData.booked_slots) {
       Object.values(apiData.booked_slots).forEach((slot: any) => {
-        const startHour = String(slot.hour).padStart(2, "0");
-        const endHour = String(slot.hour + 1).padStart(2, "0");
+        let startHour = slot.hour === 24 ? "00" : String(slot.hour).padStart(2, "0");
+        let endHour = slot.hour === 24 ? "01" : String(slot.hour + 1).padStart(2, "0");
         const timeRange = `${startHour}:00 - ${endHour}:00`;
         const key = `${slot.date}_${timeRange}`;
         converted[key] = slot.status; // Use the 'status' key directly
@@ -407,6 +409,7 @@ const JadwalBooking = () => {
         <div className="mt-4">
           <Booking 
             fetchBookings={fetchBookings}
+            kategori={kategori ? String(kategori) : ""}
           
           />
         </div>

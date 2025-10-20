@@ -19,14 +19,14 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-
-        <Route index path="/" element={<Landing />} />
+          <Route index path="/" element={<Landing />} />
 
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/dashboard" element={<Home />} />
 
             <Route path="/booking" element={<JadwalBooking />} />
+            <Route path="/booking/:kategori" element={<JadwalBooking />} />
             {/* <Route path="/booking-form" element={<Booking />} /> */}
           </Route>
 
