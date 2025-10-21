@@ -192,6 +192,9 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
             Jika sudah booking harap segera melakukan pembayaran maksimal 15
             menit.
           </li>
+          <li>
+            Pembayaran melalui transfer BCA 6375058549 Bilal Edwan.
+          </li>
         </ul>
       </div>
 
