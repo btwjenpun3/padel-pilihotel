@@ -28,15 +28,10 @@ interface JadwalItem {
 }
 
 
-interface HariAvailable {
-  id: number;
-  tanggal: string;
-  jam: string;
-}
 
 const JadwalMabar = () => {
   const [data, setData] = React.useState<JadwalItem[]>([]);
-  const [hariAvailable, setHariAvailable] = React.useState<HariAvailable[]>([]);
+
   const [startDate, setStartDate] = React.useState<Date | null>(dayjs().toDate());
   const [endDate, setEndDate] = React.useState<Date | null>(dayjs().add(30, "day").toDate());
   const [loading, setLoading] = React.useState(false);
