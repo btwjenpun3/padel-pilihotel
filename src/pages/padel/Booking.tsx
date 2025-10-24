@@ -188,11 +188,8 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
             Segala kerusakan properti di Kindy Padel akan menjadi tanggung jawab
             pemain.
           </li>
-          <li>
-            Jika sudah booking harap segera melakukan pembayaran maksimal 15
-            menit.
-          </li>
-        </ul>
+          <li>Pembayaran Maksimal 15 menit setelah melakukan booking.</li>
+          <li>Jika Sudah Memastikan Jadwal Dan Sudah Melakukan Payment Harap Konfirmasi Ke Admin Kami Melalui Whatasapp atau Instagram Kami.</li>        </ul>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -278,8 +275,6 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
             <p className="text-sm text-red-500 mt-1">{errors.timeSlot}</p>
           )}
         </div>
-
-      
 
         {/* Nama Rekening */}
         <div className="mb-4">
