@@ -188,6 +188,9 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
             Segala kerusakan properti di Kindy Padel akan menjadi tanggung jawab
             pemain.
           </li>
+            <li>
+            Pembayaran melalui transfer BCA 6375058549 Bilal Edwan.
+          </li>
           <li>Pembayaran Maksimal 15 menit setelah melakukan booking.</li>
           <li>Jika Sudah Memastikan Jadwal Dan Sudah Melakukan Payment Harap Konfirmasi Ke Admin Kami Melalui Whatasapp atau Instagram Kami.</li>        </ul>
       </div>
