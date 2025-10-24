@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
@@ -11,46 +11,32 @@ import { IoWarning } from "react-icons/io5";
 
 dayjs.locale("id");
 const timeOptions: Record<number, string> = {
-  5: "05:00 - 06:00",
-  6: "06:00 - 07:00",
-  7: "07:00 - 08:00",
-  8: "08:00 - 09:00",
-  9: "09:00 - 10:00",
-  10: "10:00 - 11:00",
-  11: "11:00 - 12:00",
-  12: "12:00 - 13:00",
-  13: "13:00 - 14:00",
-  14: "14:00 - 15:00",
-  15: "15:00 - 16:00",
-  16: "16:00 - 17:00",
-  17: "17:00 - 18:00",
-  18: "18:00 - 19:00",
-  19: "19:00 - 20:00",
-  20: "20:00 - 21:00",
-  21: "21:00 - 22:00",
-  22: "22:00 - 23:00",
-  23: "23:00 - 24:00",
-  24: "00:00 - 01:00",
-  1: "01:00 - 02:00",
-  2: "02:00 - 03:00",
-  3: "03:00 - 04:00",
-  4: "04:00 - 05:00",
+  1: " Player  1",
+  2: " Player 2",
+  3: " Player 3",
+  4: " Player 4",
+  5: " Player 5",
+    6: " Player 6",
+    7: " Player 7",
+    8: " Player 8",
+    9: " Player 9",
+    10: " Player 10",
+ 
 };
-
-
-
-const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, kategori: string }) => {
-  const [startDate, setStartDate] = useState<string>(
-    dayjs().format("YYYY-MM-DD")
-  );
-  const [timeSlot, setTimeSlot] = useState<number>(5);
+interface HariAvailable {
+  id: number;
+  tanggal: string;
+  jam: string;
+}
+const BookingMabar = ({JadwalBooking} : {JadwalBooking: any}) => {
+  const [hariDipilih, setHariDipilih] = useState<string>("");
+  const [timeSlot, setTimeSlot] = useState<number>(1);
   const [booked, setBooked] = useState<string>("");
   const [nama_rekening, setNama_Rekening] = useState<string>("");
-  
 
   const [errors, setErrors] = useState<{
     booked?: string;
-    startDate?: string;
+    hariDipilih?: string;
     timeSlot?: string;
     nama_rekening?: string;
     statusBayar?: string;
@@ -59,17 +45,43 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
 
   // Removed unused state setter
   const [availableSlots] = useState<Record<number, string>>(timeOptions);
+  const [hariAvailable, setHariAvailable] = useState<HariAvailable[]>([]);
 
   // Add SweetAlert confirmation before submitting
+
+const fetchHariAvailable = async () => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/padel-mabar/check`
+    );
+
+    const raw = response.data.hari_available || {};
+
+    const arr: HariAvailable[] = Object.values(raw);
+
+    console.log("PARSED:", arr);
+    setHariAvailable(arr);
+  } catch (error) {
+    console.error("Error fetching available days:", error);
+  }
+};
+
+
+
+  useEffect(() => {
+    fetchHariAvailable();
+  }, []);
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: any = {};
 
     if (!booked.trim()) newErrors.booked = "Nama pemesan tidak boleh kosong";
-    if (!startDate) newErrors.startDate = "Tanggal main tidak boleh kosong";
-    if (!timeSlot) newErrors.timeSlot = "Jam tidak boleh kosong";
-   
-    if (!nama_rekening.trim())
+    if (!hariDipilih) newErrors.hariDipilih = "Hari harus dipilih";
+    if (!timeSlot) newErrors.timeSlot = "Slot tidak boleh kosong";
+
+    if (nama_rekening.trim() === "")
       newErrors.nama_rekening = "Nama rekening pengirim tidak boleh kosong";
 
     if (Object.keys(newErrors).length > 0) {
@@ -80,8 +92,8 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
     setErrors({});
 
     const confirmation = await Swal.fire({
-      title: "Konfirmasi Booking",
-      text: `Apakah Anda yakin ingin memesan untuk tanggal ${startDate} dan jam ${timeOptions[timeSlot]}?`,
+      title: "Konfirmasi Mabar",
+      text: `Apakah Anda yakin ingin memesan untuk tanggal ${hariDipilih} dan Slot ${timeOptions[timeSlot]}?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Ya, Pesan",
@@ -92,21 +104,17 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
       return;
     }
 
-
-    if(kategori === "coaching"){
-      kategori = "coaching";
-    }else{
-      kategori = "court";
-    }
     try {
+   
+
       const response = await axios.post(
-        "https://pilihotel.com/api/padel",
+        "https://pilihotel.com/api/padel-mabar",
         {
-          booked: booked,
-          start_date: startDate,
-          time_slot: timeSlot,
+          nama_pemain: booked,
+
+          slot: Number(timeSlot),
+          id_hari: hariDipilih,
           nama_rekening,
-          kategori: kategori,
         },
         {
           headers: {
@@ -120,22 +128,22 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
       Swal.fire({
         icon: "success",
         title: "Booking berhasil!",
-        text: "Slot waktu Anda telah berhasil dibooking.",
+        text: "Slot Player waktu Anda telah berhasil dibooking.",
       });
-      
+
       // Refresh data booking
-      fetchBookings();
+      JadwalBooking();
 
       // ✅ Reset semua input setelah sukses
       setBooked("");
-      setStartDate(dayjs().format("YYYY-MM-DD"));
+      setHariDipilih("");
       setTimeSlot(5);
       setNama_Rekening("");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
         Swal.fire({
           icon: "error",
-          title: "Slot sudah dibooking!",
+          title: "Slot Player sudah dibooking!",
           text: "Maaf, slot waktu ini sudah dibooking. Silakan pilih slot lain.",
         });
 
@@ -155,7 +163,7 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <h2 className="text-2xl inline-flex gap-2  font-semibold mb-4 text-gray-800 dark:text-white">
-        Form Booking Kindy Padel{" "}
+        Form Booking Mabar Kindy Padel{" "}
         <span className="inline-flex items-center justify-center w-6 h-6 text-gray-700 dark:text-gray-400">
           <GiTennisCourt />
         </span>
@@ -171,14 +179,14 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
         <ul className="list-disc pl-5 space-y-2">
           <li>
             Apabila sudah melakukan payment maka tidak bisa melakukan
-            cancel/refund.
+            cancel/refund/reschedule.
           </li>
+          <li>Pembayaran melalui transfer BCA 6375058549 Bilal Edwan.</li>
+          <li>Pembayaran Maksimal 15 menit setelah melakukan booking.</li>
           <li>
-            Untuk jadwal yang sudah di reservasi tidak bisa di reschedule.
-          </li>
-          <li>
-            Jika turun hujan sebelum sesi dimulai, maka jadwal bisa di
-            reschedule.
+            Jika Sudah Memastikan Jadwal Dan Sudah Melakukan Payment Harap
+            Konfirmasi Ke Admin Kami Melalui Whatasapp +62 813-2097-181 atau
+            Instagram @KindyPadel.
           </li>
           <li>
             Jika sesi sudah berjalan lebih dari 30 menit & terjadi hujan, fee
@@ -188,13 +196,17 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
             Segala kerusakan properti di Kindy Padel akan menjadi tanggung jawab
             pemain.
           </li>
+
           <li>
-            Pembayaran Maksimal 15 menit setelah melakukan booking. Jika Sudah
-            Memastikan Jadwal Dan Sudah Melakukan Payment Harap Konfirmasi Ke
-            Admin Kami Melalui Whatasapp +62 813-2097-181 atau Instagram
-            @KindyPadel.
+            Jadwal Mabar Perjam jika ingin lebih dari 1 Jam maka Peserta
+            melakukan Process Booking 2x.
           </li>
-          <li>Pembayaran melalui transfer BCA 6375058549 Bilal Edwan.</li>
+
+          <li>Satu Session Mabar All Level Maksimal 8 Player.</li>
+          <li>
+            Host Berhak Mereschedule Jadwal Mabar Apabila Terjadi Force Majure.
+          </li>
+          <li>Sesi Akan Berjalan Kalau Sudah Ada Minimal 4 Orang. </li>
         </ul>
       </div>
 
@@ -224,38 +236,43 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
             <p className="text-sm text-red-500 mt-1">{errors.booked}</p>
           )}
         </div>
-
-        {/* Tanggal */}
+        {/* Pilihan Hari Available */}
         <div className="mb-4">
           <label className="block mb-2 text-gray-700 dark:text-gray-300">
-            Tanggal Main
+            Piih Session Tersedia
           </label>
-          <DatePicker
-            selected={new Date(startDate)}
-            onChange={(date: Date | null) => {
-              if (date) {
-                setStartDate(dayjs(date).format("YYYY-MM-DD"));
-                if (errors.startDate) {
-                  setErrors((prev) => ({ ...prev, startDate: undefined }));
-                }
+          <select
+            value={hariDipilih}
+            onChange={(e) => {
+              setHariDipilih(e.target.value);
+              if (errors.hariDipilih && e.target.value) {
+                setErrors((prev) => ({ ...prev, hariDipilih: undefined }));
               }
             }}
-            dateFormat="yyyy-MM-dd"
             className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
-              errors.startDate
+              errors.hariDipilih
                 ? "border-red-500  dark:bg-red-900/20"
                 : "border-gray-300"
             }`}
-          />
-          {errors.startDate && (
-            <p className="text-sm text-red-500 mt-1">{errors.startDate}</p>
+          >
+            <option value="">Pilih Session Tersedia</option>
+            {hariAvailable.map((hari) => (
+              <option key={hari.id} value={hari.id}>
+                {dayjs(hari.tanggal).format("dddd, DD MMMM YYYY")} - {hari.jam}
+              </option>
+            ))}
+          </select>
+          {errors.hariDipilih && (
+            <p className="text-sm text-red-500 mt-1">{errors.hariDipilih}</p>
           )}
         </div>
+
+        
 
         {/* Jam */}
         <div className="mb-4">
           <label className="block mb-2 text-gray-700 dark:text-gray-300">
-            Jam
+            Player
           </label>
           <select
             value={timeSlot}
@@ -319,4 +336,4 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
   );
 };
 
-export default Booking;
+export default BookingMabar;

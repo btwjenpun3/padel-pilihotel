@@ -99,15 +99,17 @@ const Landing = () => {
 
       {/* Price List Section */}
       <section id="about" className="py-20 bg-white px-6">
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto text-center">
           <h3 className="text-3xl font-bold mb-6 text-gray-900">
             Price List <span className="text-blue-600">Kindy Padel</span>
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+          {/* Responsive grid dengan minimal lebar 250px per kolom */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 place-items-stretch">
             {[
               {
                 title: "Court",
-                price: " Rp 87.000/jam",
+                price: "Rp 87.000/jam",
                 link: "/booking/court",
                 features: [
                   { text: "Senin - Minggu", bullet: true },
@@ -120,7 +122,7 @@ const Landing = () => {
               {
                 title: "Coaching Class",
                 link: "/booking/coaching",
-                price: " Rp 600.000/jam",
+                price: "Rp 600.000/jam",
                 features: [
                   { text: "1-2 Orang 600k", bullet: true },
                   { text: "3-4 Orang 700k", bullet: true },
@@ -128,8 +130,18 @@ const Landing = () => {
                 ],
               },
               {
-                title: "Rent Gear",
-                price: " Rp 85.000 / Sesi",
+                title: "Mabar All Level",
+                link: "/booking-mabar",
+                price: "Rp 75.000 / Player 4-8 Player",
+                features: [
+                  { text: "free cold drinks", bullet: true },
+                  { text: "Sewa Racket Tersedia", bullet: true },
+                  { text: "Balls Included", bullet: true },
+                ],
+              },
+              {
+                title: "Sewa Racket",
+                price: "Rp 85.000 / Sesi",
                 features: [
                   { text: "Padle Racket", bullet: true },
                   { text: "Sepatu Padel", bullet: true },
@@ -139,61 +151,52 @@ const Landing = () => {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-transform hover:-translate-y-2 h-96 flex flex-col justify-between"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-transform hover:-translate-y-2 flex flex-col justify-between min-w-[250px]"
                 whileHover={{ scale: 1.02 }}
               >
-                <div className="p-6 text-center">
+                <div className="p-6 text-center flex-1 flex flex-col justify-between">
                   <h4 className="text-xl font-semibold mb-2 text-gray-800">
                     {item.title}
                   </h4>
-                  <p className="text-blue-600 font-bold text-2xl mb-4">
-                    Mulai Dari
-                    <br />
-                    {item.price}
-                  </p>
+                  {item.title === "Mabar All Level" ? (
+                    <p className="text-blue-600 font-bold text-2xl mb-16  ">
+                      {item.title !== "Mabar All Level" ? "Mulai Dari" : ""}
+                      <br />
+                      {item.price}
+                    </p>
+                  ) : (
+                    <p className="text-blue-600 font-bold text-2xl mb-4">
+                      {item.title !== "Mabar All Level" ? "Mulai Dari" : ""}
+                      <br />
+                      {item.price}
+                    </p>
+                  )}
                   <ul className="text-gray-600 text-left space-y-2">
                     {item.features.map((feature, index) => (
                       <li key={index} className="flex items-center">
-                        {typeof feature === "object" && feature.bullet && (
+                        {feature.bullet && (
                           <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
                         )}
-                        {typeof feature === "object" ? feature.text : feature}
+                        {feature.text}
                       </li>
                     ))}
                   </ul>
                 </div>
+
                 {item.title === "Coaching Class" && (
-                  <span className=" ml-4 mb-4 text-left text-gray-500 text-[10px]">
-                    *Harga Di atas Sudah Include Coach, Court , Ball
+                  <span className="ml-4 mb-2 text-left text-gray-500 text-[10px]">
+                    *Harga sudah termasuk Coach, Court & Ball
                   </span>
                 )}
 
-                {item.title === "Court" && (
-                  <a
-                    href={item.link}
-                    className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto"
-                  >
-                    Booking Sekarang
-                  </a>
-                )}
-
-                {item.title === "Coaching Class" && (
-                  <a
-                    href={item.link}
-                    className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto"
-                  >
-                    Booking Sekarang
-                  </a>
-                )}
-
-                {item.title === "Rent Gear" && (
-                  <a
-                    href="https://wa.me/6281320971811"
-                    className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto"
-                  >
-                    Hubungi Sekarang
-                  </a>
-                )}
+                <a
+                  href={item.link ? item.link : "https://wa.me/6281320971811"}
+                  className="bg-blue-600 text-white py-2 px-4 rounded-b-2xl hover:bg-blue-700 transition block"
+                >
+                  {item.title === "Rent Gear"
+                    ? "Hubungi Sekarang"
+                    : "Booking Sekarang"}
+                </a>
               </motion.div>
             ))}
           </div>

@@ -12,10 +12,12 @@ import JadwalBooking from "./pages/padel/JadwalBooking";
 
 // import Booking from "./pages/padel/Booking";
 import Landing from "./pages/landing/landing";
+import JadwalMabar from "./pages/padel/JadwalMabar";
 
 export default function App() {
   return (
     <>
+    
       <Router>
         <ScrollToTop />
         <Routes>
@@ -26,6 +28,7 @@ export default function App() {
             <Route index path="/dashboard" element={<Home />} />
 
             <Route path="/booking" element={<JadwalBooking />} />
+            <Route path="/booking-MABAR" element={<JadwalMabar />} />
             <Route path="/booking/:kategori" element={<JadwalBooking />} />
             {/* <Route path="/booking-form" element={<Booking />} /> */}
           </Route>

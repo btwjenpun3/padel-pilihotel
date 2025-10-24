@@ -51,9 +51,9 @@ const navItems: NavItem[] = [
   },
 
   {
-        icon: <GiTennisCourt />,
-      name: "Booking Lapangan",
-      path: "/booking-form",
+    icon: <GiTennisCourt />,
+    name: "Jadwal Mabar",
+    path: "/booking-mabar",
   },
   //   name: "Forms",
   //   icon: <ListIcon />,
