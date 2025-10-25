@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
@@ -16,20 +16,22 @@ const timeOptions: Record<number, string> = {
   3: " Player 3",
   4: " Player 4",
   5: " Player 5",
-    6: " Player 6",
-    7: " Player 7",
-    8: " Player 8",
-    9: " Player 9",
-    10: " Player 10",
- 
+  6: " Player 6",
+  7: " Player 7",
+  8: " Player 8",
+  9: " Player 9",
+  10: " Player 10",
 };
+
 interface HariAvailable {
   id: number;
   tanggal: string;
   jam: string;
 }
-const BookingMabar = ({JadwalBooking} : {JadwalBooking: any}) => {
-  const [hariDipilih, setHariDipilih] = useState<string>("");
+
+
+const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,HariAvailable: HariAvailable[] }) => {
+  const [hariDipilih, setHariDipilih] = useState<string[]>([""]);
   const [timeSlot, setTimeSlot] = useState<number>(1);
   const [booked, setBooked] = useState<string>("");
   const [nama_rekening, setNama_Rekening] = useState<string>("");
@@ -41,36 +43,28 @@ const BookingMabar = ({JadwalBooking} : {JadwalBooking: any}) => {
     nama_rekening?: string;
     statusBayar?: string;
     paket?: string;
+    id_hari?: string;
+    sessionErrors?: string[];
   }>({});
 
   // Removed unused state setter
   const [availableSlots] = useState<Record<number, string>>(timeOptions);
-  const [hariAvailable, setHariAvailable] = useState<HariAvailable[]>([]);
+
 
   // Add SweetAlert confirmation before submitting
+    const handleAddSession = () => {
+      setHariDipilih((prev) => [...prev, ""]);
+    };
 
-const fetchHariAvailable = async () => {
-  try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/padel-mabar/check`
-    );
-
-    const raw = response.data.hari_available || {};
-
-    const arr: HariAvailable[] = Object.values(raw);
-
-    console.log("PARSED:", arr);
-    setHariAvailable(arr);
-  } catch (error) {
-    console.error("Error fetching available days:", error);
-  }
-};
+      const handleSessionChange = (index: number, value: string) => {
+        const updated = [...hariDipilih];
+        updated[index] = value;
+        setHariDipilih(updated);
+      };
 
 
+ 
 
-  useEffect(() => {
-    fetchHariAvailable();
-  }, []);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,11 +72,30 @@ const fetchHariAvailable = async () => {
     const newErrors: any = {};
 
     if (!booked.trim()) newErrors.booked = "Nama pemesan tidak boleh kosong";
-    if (!hariDipilih) newErrors.hariDipilih = "Hari harus dipilih";
+
+    if (hariDipilih.length === 0 || hariDipilih.every((v) => !v)) {
+      newErrors.hariDipilih = "Minimal pilih satu session!";
+    }
     if (!timeSlot) newErrors.timeSlot = "Slot tidak boleh kosong";
 
     if (nama_rekening.trim() === "")
       newErrors.nama_rekening = "Nama rekening pengirim tidak boleh kosong";
+
+    // Cek duplikat hari
+    const sessionErrors = Array(hariDipilih.length).fill("");
+    const hariCount: Record<string, number> = {};
+    hariDipilih.forEach((id) => {
+      if (id) hariCount[id] = (hariCount[id] || 0) + 1;
+    });
+    hariDipilih.forEach((id, idx) => {
+      if (id && hariCount[id] > 1) {
+        sessionErrors[idx] = "Session hari tidak boleh sama!";
+      }
+    });
+    if (sessionErrors.some((err) => err)) {
+      setErrors((prev: any) => ({ ...prev, sessionErrors }));
+      return;
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -105,15 +118,18 @@ const fetchHariAvailable = async () => {
     }
 
     try {
-   
+      const sessionData = hariDipilih
+        .filter((id) => id)
+        .map((id) => ({
+          id_hari: id,
+          slot: Number(timeSlot),
+        }));
 
-      const response = await axios.post(
-        "https://pilihotel.com/api/padel-mabar",
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/padel-mabar`,
         {
           nama_pemain: booked,
-
-          slot: Number(timeSlot),
-          id_hari: hariDipilih,
+          sessions: sessionData,
           nama_rekening,
         },
         {
@@ -124,7 +140,7 @@ const fetchHariAvailable = async () => {
         }
       );
 
-      console.log("Booking response:", response.data);
+
       Swal.fire({
         icon: "success",
         title: "Booking berhasil!",
@@ -136,19 +152,35 @@ const fetchHariAvailable = async () => {
 
       // ✅ Reset semua input setelah sukses
       setBooked("");
-      setHariDipilih("");
+        setHariDipilih([""]);
       setTimeSlot(5);
       setNama_Rekening("");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
+        const conflicts = error.response?.data.conflicts || [];
+        // Map conflicts to session input errors
+        const sessionErrors = Array(hariDipilih.length).fill("");
+        conflicts.forEach((conflict: { id_hari: string; slot: number; message: string }) => {
+          hariDipilih.forEach((id, idx) => {
+            if (String(id) === String(conflict.id_hari)) {
+              sessionErrors[idx] = conflict.message || "Slot sudah dibooking. Pilih session lain.";
+            }
+          });
+        });
+        setErrors((prev: any) => ({ ...prev, hariDipilih: undefined, sessionErrors }));
+
         Swal.fire({
           icon: "error",
           title: "Slot Player sudah dibooking!",
-          text: "Maaf, slot waktu ini sudah dibooking. Silakan pilih slot lain.",
+          html:
+            "Maaf, slot berikut sudah tidak tersedia:<br><br>" +
+            conflicts
+              .map(
+                (c: { id_hari: string; slot: number; message: string }) =>
+                  `• Session ID: ${c.id_hari} - Player: ${timeOptions[c.slot]}<br>${c.message}`
+              )
+              .join("<br>")
         });
-
-        newErrors.timeSlot = "Slot waktu sudah dibooking Pilih Waktu Lain";
-        setErrors(newErrors);
         return;
       }
 
@@ -182,6 +214,8 @@ const fetchHariAvailable = async () => {
             cancel/refund/reschedule.
           </li>
           <li>Pembayaran melalui transfer BCA 6375058549 Bilal Edwan.</li>
+          <li>Rp 75.000 / Player / Session. Jika 2 Session Maka Rp 150.000 / Player dst.</li>
+          <li>1 Session adalah 1 Jam.</li>
           <li>Pembayaran Maksimal 15 menit setelah melakukan booking.</li>
           <li>
             Jika Sudah Memastikan Jadwal Dan Sudah Melakukan Payment Harap
@@ -237,37 +271,54 @@ const fetchHariAvailable = async () => {
           )}
         </div>
         {/* Pilihan Hari Available */}
-        <div className="mb-4">
-          <label className="block mb-2 text-gray-700 dark:text-gray-300">
-            Piih Session Tersedia
-          </label>
-          <select
-            value={hariDipilih}
-            onChange={(e) => {
-              setHariDipilih(e.target.value);
-              if (errors.hariDipilih && e.target.value) {
-                setErrors((prev) => ({ ...prev, hariDipilih: undefined }));
-              }
-            }}
-            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
-              errors.hariDipilih
-                ? "border-red-500  dark:bg-red-900/20"
-                : "border-gray-300"
-            }`}
-          >
-            <option value="">Pilih Session Tersedia</option>
-            {hariAvailable.map((hari) => (
-              <option key={hari.id} value={hari.id}>
-                {dayjs(hari.tanggal).format("dddd, DD MMMM YYYY")} - {hari.jam}
-              </option>
-            ))}
-          </select>
-          {errors.hariDipilih && (
-            <p className="text-sm text-red-500 mt-1">{errors.hariDipilih}</p>
-          )}
-        </div>
-
-        
+        {hariDipilih.map((selectedHari, index) => (
+          <div className="mb-4 flex items-center gap-2" key={index}>
+            <div className="flex-1">
+              <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                Pilih Session Tersedia {hariDipilih.length > 1 ? `(${index + 1})` : ""}
+              </label>
+              <select
+                value={selectedHari}
+                onChange={(e) => handleSessionChange(index, e.target.value)}
+                className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+                  errors.sessionErrors && errors.sessionErrors[index]
+                    ? "border-red-500  dark:bg-red-900/20"
+                    : "border-gray-300"
+                }`}
+              >
+                <option value="">Pilih Session Tersedia</option>
+                {HariAvailable.map((hari) => (
+                  <option key={hari.id} value={hari.id}>
+                    {dayjs(hari.tanggal).format("dddd, DD MMMM YYYY")} - {hari.jam}
+                  </option>
+                ))}
+              </select>
+              {/* Error hanya pada session yang bentrok */}
+              {errors.sessionErrors && errors.sessionErrors[index] && (
+                <p className="text-sm text-red-500 mt-1">{errors.sessionErrors[index]}</p>
+              )}
+            </div>
+            {hariDipilih.length > 1 && (
+              <button
+                type="button"
+                className="ml-1 text-xs px-2 py-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 focus:outline-none"
+                title="Hapus session ini"
+                onClick={() => {
+                  setHariDipilih((prev) => prev.filter((_, i) => i !== index));
+                }}
+              >
+                &#10006;
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={handleAddSession}
+          className=" mb-3 px-3 py-2 bg-green-600 text-white rounded-lg"
+        >
+          + Tambah Session
+        </button>
 
         {/* Jam */}
         <div className="mb-4">

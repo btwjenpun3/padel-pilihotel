@@ -40,23 +40,33 @@ const timeOptions: Record<number, string> = {
 
 
 const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, kategori: string }) => {
-  const [startDate, setStartDate] = useState<string>(
-    dayjs().format("YYYY-MM-DD")
-  );
-  const [timeSlot, setTimeSlot] = useState<number>(5);
+  // Fungsi untuk mengumpulkan index slot yang bentrok
+  const getDuplicateIndices = (dates: string[], slots: number[]) => {
+    const slotPairs = dates.map((date, idx) => ({ date, hour: slots[idx] }));
+    const duplicates: number[] = [];
+    for (let i = 0; i < slotPairs.length; i++) {
+      const isDuplicate = slotPairs.filter(
+        (slot, idx) => slot.date === slotPairs[i].date && slot.hour === slotPairs[i].hour && idx !== i
+      ).length > 0;
+      if (isDuplicate) {
+        duplicates.push(i);
+      }
+    }
+    // Hilangkan duplikat index
+    return Array.from(new Set(duplicates));
+  };
+  const [startDates, setStartDates] = useState<string[]>([dayjs().format("YYYY-MM-DD")]);
+  const [timeSlots, setTimeSlots] = useState<number[]>([5]);
   const [booked, setBooked] = useState<string>("");
   const [nama_rekening, setNama_Rekening] = useState<string>("");
   
 
-  const [errors, setErrors] = useState<{
-    booked?: string;
-    startDate?: string;
-    timeSlot?: string;
-    nama_rekening?: string;
-    statusBayar?: string;
-    paket?: string;
-  }>({});
-
+const [errors, setErrors] = useState<{
+  booked?: string;
+  startDate?: string;
+  timeSlot?: string[]; // ✅ Ubah jadi array
+  nama_rekening?: string;
+}>({});
   // Removed unused state setter
   const [availableSlots] = useState<Record<number, string>>(timeOptions);
 
@@ -64,15 +74,40 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: any = {};
-
     if (!booked.trim()) newErrors.booked = "Nama pemesan tidak boleh kosong";
-    if (!startDate) newErrors.startDate = "Tanggal main tidak boleh kosong";
-    if (!timeSlot) newErrors.timeSlot = "Jam tidak boleh kosong";
-   
+    if (!startDates.length || startDates.some((d) => !d)) newErrors.startDate = "Tanggal main tidak boleh kosong";
+    if (!timeSlots.length || timeSlots.some((t) => !t)) newErrors.timeSlot = ["Jam tidak boleh kosong"];
+
+    // Cek duplikat tanggal dan jam
+    const slotErrorArr: string[] = Array(startDates.length).fill("");
+    const slotPairs: Record<string, number[]> = {};
+    startDates.forEach((date, idx) => {
+      const key = `${date}-${timeSlots[idx]}`;
+      if (!slotPairs[key]) slotPairs[key] = [];
+      slotPairs[key].push(idx);
+    });
+    Object.values(slotPairs).forEach(indices => {
+      if (indices.length > 1) {
+        indices.forEach(idx => {
+          slotErrorArr[idx] = "Tanggal & jam tidak boleh sama persis dengan input lain.";
+        });
+      }
+    });
+    // Kumpulkan index slot yang bentrok (fungsi lama)
+    const duplicateIndices = getDuplicateIndices(startDates, timeSlots);
+    if (duplicateIndices.length > 0) {
+      duplicateIndices.forEach(idx => {
+        slotErrorArr[idx] = "Slot ini bentrok dengan input lain. Pilih jadwal berbeda.";
+      });
+    }
+    if (slotErrorArr.some((err) => err)) {
+      newErrors.timeSlot = slotErrorArr;
+    }
     if (!nama_rekening.trim())
       newErrors.nama_rekening = "Nama rekening pengirim tidak boleh kosong";
 
-    if (Object.keys(newErrors).length > 0) {
+    // Jika ada error bentrok antar input, hentikan proses submit
+    if ((newErrors.timeSlot && newErrors.timeSlot.some((err: string) => err)) || Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
@@ -81,7 +116,19 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
 
     const confirmation = await Swal.fire({
       title: "Konfirmasi Booking",
-      text: `Apakah Anda yakin ingin memesan untuk tanggal ${startDate} dan jam ${timeOptions[timeSlot]}?`,
+      html:
+        `<div style=' text-align:center;'>` +
+        `<p>Pastikan data booking Anda sudah benar:</p>` +
+        `<ul style='margin-top:8px;'>` +
+        startDates
+          .map(
+            (d, i) =>
+              `<li><b>Tanggal:</b> ${dayjs(d).format("DD MMM YYYY")} <b>Jam:</b> ${timeOptions[timeSlots[i]]}</li>`
+          )
+          .join("") +
+        `</ul>` +
+        `<p style='margin-top:10px;'>Jika sudah yakin, klik <b>Ya, Pesan</b>.</p>` +
+        `</div>`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Ya, Pesan",
@@ -92,19 +139,25 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
       return;
     }
 
-
     if(kategori === "coaching"){
       kategori = "coaching";
     }else{
       kategori = "court";
     }
+
+    
+    const timeSlotData = startDates.map((date, i) => ({
+      date,
+      time_slot: timeSlots[i],
+    }));
+
     try {
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_URL}/padel`,
         {
           booked: booked,
-          start_date: startDate,
-          time_slot: timeSlot,
+          start_date: startDates,
+          time_slot: timeSlotData,
           nama_rekening,
           kategori: kategori,
         },
@@ -116,7 +169,6 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
         }
       );
 
-      console.log("Booking response:", response.data);
       Swal.fire({
         icon: "success",
         title: "Booking berhasil!",
@@ -126,23 +178,41 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
       // Refresh data booking
       fetchBookings();
 
-      // ✅ Reset semua input setelah sukses
-      setBooked("");
-      setStartDate(dayjs().format("YYYY-MM-DD"));
-      setTimeSlot(5);
-      setNama_Rekening("");
+  // ✅ Reset semua input setelah sukses
+  setBooked("");
+  setStartDates([dayjs().format("YYYY-MM-DD")]);
+  setTimeSlots([5]);
+  setNama_Rekening("");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
+        const conflicts = error.response.data.conflicts || [];
+        // Kumpulkan semua index yang bentrok dengan backend
+        const updatedErrorSlots = Array(startDates.length).fill("");
+        conflicts.forEach((c: { date: string; hour: number }) => {
+          startDates.forEach((d, i) => {
+            if (d === c.date && timeSlots[i] === c.hour) {
+              updatedErrorSlots[i] = "Slot ini bentrok. Pilih jadwal lain.";
+            }
+          });
+        });
+        setErrors({ timeSlot: updatedErrorSlots });
+
+        const conflictList = conflicts
+          .map(
+            (c: { date: string; hour: number }) =>
+              `• ${dayjs(c.date).format("DD MMM YYYY")} - ${timeOptions[c.hour]}`
+          )
+          .join("<br>");
+
         Swal.fire({
           icon: "error",
-          title: "Slot sudah dibooking!",
-          text: "Maaf, slot waktu ini sudah dibooking. Silakan pilih slot lain.",
+          title: "Slot Sudah Dibooking",
+          html: `Maaf slot berikut sudah tidak tersedia:<br><br>${conflictList}`,
         });
-
-        newErrors.timeSlot = "Slot waktu sudah dibooking Pilih Waktu Lain";
-        setErrors(newErrors);
         return;
       }
+
+  
 
       Swal.fire({
         icon: "error",
@@ -225,62 +295,109 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
           )}
         </div>
 
-        {/* Tanggal */}
-        <div className="mb-4">
-          <label className="block mb-2 text-gray-700 dark:text-gray-300">
-            Tanggal Main
-          </label>
-          <DatePicker
-            selected={new Date(startDate)}
-            onChange={(date: Date | null) => {
-              if (date) {
-                setStartDate(dayjs(date).format("YYYY-MM-DD"));
-                if (errors.startDate) {
-                  setErrors((prev) => ({ ...prev, startDate: undefined }));
-                }
-              }
-            }}
-            dateFormat="yyyy-MM-dd"
-            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
-              errors.startDate
-                ? "border-red-500  dark:bg-red-900/20"
-                : "border-gray-300"
-            }`}
-          />
-          {errors.startDate && (
-            <p className="text-sm text-red-500 mt-1">{errors.startDate}</p>
-          )}
-        </div>
+        {/* Tanggal & Jam Main (Dinamis) */}
+        {startDates.map((date, idx) => (
+          <div className="mb-4 flex flex-row gap-2 items-start" key={idx}>
+            <div className="w-1/2 md:flex-1 flex flex-col justify-end">
+              <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                Tanggal Main {startDates.length > 1 ? `(${idx + 1})` : ""}
+              </label>
+              <DatePicker
+                selected={date ? new Date(date) : null}
+                onChange={(d: Date | null) => {
+                  if (d) {
+                    const updated = [...startDates];
+                    updated[idx] = dayjs(d).format("YYYY-MM-DD");
+                    setStartDates(updated);
+                    if (errors.startDate) {
+                      setErrors((prev) => ({ ...prev, startDate: undefined }));
+                    }
+                  }
+                }}
+                dateFormat="yyyy-MM-dd"
+                className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+                  errors.startDate
+                    ? "border-red-500  dark:bg-red-900/20"
+                    : "border-gray-300"
+                }`}
+              />
+            </div>
+            <div className="w-1/2 md:flex-4 ml-2 flex flex-col justify-end min-h-[56px]">
+              <label className="block mb-2 text-gray-700 dark:text-gray-300">
+                Jam
+              </label>
+              <div className="flex items-center gap-2">
+                <select
+                  value={timeSlots[idx]}
+                  onChange={(e) => {
+                    const updated = [...timeSlots];
+                    updated[idx] = Number(e.target.value);
+                    setTimeSlots(updated);
+                    // Hapus error hanya pada slot yang diedit
+                    if (errors.timeSlot && errors.timeSlot[idx]) {
+                      const newErr = [...errors.timeSlot];
+                      newErr[idx] = "";
+                      setErrors((prev) => ({ ...prev, timeSlot: newErr }));
+                    }
+                  }}
+                  className={`block w-full px-3 py-2 mt-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+                    errors.timeSlot && errors.timeSlot[idx]
+                      ? "border-red-500 dark:bg-red-900/20"
+                      : "border-gray-300"
+                  }`}
+                >
+                  {Object.entries(availableSlots).map(([key, label]) => (
+                    <option key={key} value={Number(key)}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                {/* Tombol hapus kecil */}
+                {startDates.length > 1 && (
+                  <button
+                    type="button"
+                    className="ml-1 text-xs px-2 py-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 focus:outline-none"
+                    title="Hapus input ini"
+                    onClick={() => {
+                      setStartDates((prev) => prev.filter((_, i) => i !== idx));
+                      setTimeSlots((prev) => prev.filter((_, i) => i !== idx));
+                      // Hapus error slot terkait
+                      if (errors.timeSlot) {
+                        const newErr = [...errors.timeSlot];
+                        newErr.splice(idx, 1);
+                        setErrors((prev) => ({ ...prev, timeSlot: newErr }));
+                      }
+                    }}
+                  >
+                    &#10006;
+                  </button>
+                )}
+              </div>
+              {/* Error hanya pada slot yang bentrok */}
+              {errors.timeSlot && errors.timeSlot[idx] && (
+                <p className="text-sm text-red-500 mt-2">{errors.timeSlot[idx]}</p>
+              )}
+            </div>
+          </div>
+        ))}
 
-        {/* Jam */}
-        <div className="mb-4">
-          <label className="block mb-2 text-gray-700 dark:text-gray-300">
-            Jam
-          </label>
-          <select
-            value={timeSlot}
-            onChange={(e) => {
-              setTimeSlot(Number(e.target.value));
-              if (errors.timeSlot && e.target.value) {
-                setErrors((prev) => ({ ...prev, timeSlot: undefined }));
-              }
-            }}
-            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
-              errors.timeSlot
-                ? "border-red-500  dark:bg-red-900/20"
-                : "border-gray-300"
-            }`}
-          >
-            {Object.entries(availableSlots).map(([key, label]) => (
-              <option key={key} value={Number(key)}>
-                {label}
-              </option>
-            ))}
-          </select>
-          {errors.timeSlot && (
-            <p className="text-sm text-red-500 mt-1">{errors.timeSlot}</p>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setStartDates((prev) => {
+              const last =
+                prev.length > 0
+                  ? prev[prev.length - 1]
+                  : dayjs().format("YYYY-MM-DD");
+              const next = dayjs(last).add(1, "day").format("YYYY-MM-DD");
+              return [...prev, next];
+            });
+            setTimeSlots((prev) => [...prev, 5]);
+          }}
+          className=" mb-3 px-3 py-2 bg-green-600 text-white rounded-lg"
+        >
+          + Tambah
+        </button>
 
         {/* Nama Rekening */}
         <div className="mb-4">

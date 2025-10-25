@@ -132,7 +132,7 @@ const Landing = () => {
               {
                 title: "Mabar All Level",
                 link: "/booking-mabar",
-                price: "Rp 75.000 / Player 4-8 Player",
+                price: "Rp 75.000 / Player / Session",
                 features: [
                   { text: "free cold drinks", bullet: true },
                   { text: "Sewa Racket Tersedia", bullet: true },

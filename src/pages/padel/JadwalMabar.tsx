@@ -26,6 +26,11 @@ interface JadwalItem {
   jam: string;
   pemain: Pemain[];
 }
+interface HariAvailable {
+  id: number;
+  tanggal: string;
+  jam: string;
+}
 
 
 
@@ -35,9 +40,11 @@ const JadwalMabar = () => {
   const [startDate, setStartDate] = React.useState<Date | null>(dayjs().toDate());
   const [endDate, setEndDate] = React.useState<Date | null>(dayjs().add(30, "day").toDate());
   const [loading, setLoading] = React.useState(false);
+  const [hariAvailable, setHariAvailable] = React.useState<HariAvailable[]>([]);
 
   const fetchData = async () => {
       setLoading(true);
+  
     try {
 
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/padel-mabar`);
@@ -52,6 +59,23 @@ const JadwalMabar = () => {
       setLoading(false);
     } 
   };
+
+   const fetchHariAvailable = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/padel-mabar/check`
+        );
+  
+        const raw = response.data.hari_available || {};
+  
+        const arr: HariAvailable[] = Object.values(raw);
+  
+        console.log("PARSED:", arr);
+        setHariAvailable(arr);
+      } catch (error) {
+        console.error("Error fetching available days:", error);
+      }
+    };
 
   const slot = {
     1: "Player 1",
@@ -81,6 +105,7 @@ const JadwalMabar = () => {
 
   React.useEffect(() => {
     fetchData();
+    fetchHariAvailable();
   }, []);
 
   return (
@@ -242,7 +267,10 @@ const JadwalMabar = () => {
                 </div>
               </div>
               <button
-                onClick={fetchData}
+                onClick={() => {
+                  fetchData();
+                  fetchHariAvailable();
+                }}
                 disabled={loading}
                 className="w-full md:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm sm:text-base font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
               >
@@ -342,7 +370,11 @@ const JadwalMabar = () => {
           </div>
         </div>
         <div className="mt-4">
-          <BookingMabar JadwalBooking={fetchData} />
+          <BookingMabar
+          
+          JadwalBooking={fetchData}
+          HariAvailable={hariAvailable}
+          />
         </div>
       </div>
     </div>
