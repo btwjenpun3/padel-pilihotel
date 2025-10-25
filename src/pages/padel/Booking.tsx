@@ -396,7 +396,7 @@ const [errors, setErrors] = useState<{
           }}
           className=" mb-3 px-3 py-2 bg-green-600 text-white rounded-lg"
         >
-          + Tambah
+          + Tambah Tanggal & Jam Main
         </button>
 
         {/* Nama Rekening */}
