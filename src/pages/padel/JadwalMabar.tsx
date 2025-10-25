@@ -70,7 +70,7 @@ const JadwalMabar = () => {
   
         const arr: HariAvailable[] = Object.values(raw);
   
-        console.log("PARSED:", arr);
+    
         setHariAvailable(arr);
       } catch (error) {
         console.error("Error fetching available days:", error);
