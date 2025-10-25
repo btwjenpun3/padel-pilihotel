@@ -74,7 +74,11 @@ const [errors, setErrors] = useState<{
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: any = {};
-    if (!booked.trim()) newErrors.booked = "Nama pemesan tidak boleh kosong";
+    if (!booked.trim()) {
+      newErrors.booked = "Nama pemesan tidak boleh kosong";
+    } else if (/^\d+$/.test(booked.trim())) {
+      newErrors.booked = "Nama pemesan tidak boleh hanya angka. Harus mengandung huruf.";
+    }
     if (!startDates.length || startDates.some((d) => !d)) newErrors.startDate = "Tanggal main tidak boleh kosong";
     if (!timeSlots.length || timeSlots.some((t) => !t)) newErrors.timeSlot = ["Jam tidak boleh kosong"];
 

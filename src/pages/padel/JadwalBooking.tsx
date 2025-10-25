@@ -45,20 +45,20 @@ const JadwalBooking = () => {
   const [endDate, setEndDate] = useState(
     dayjs().add(6, "day").format("YYYY-MM-DD")
   );
-  const [bookings, setBookings] = useState<Record<string, string>>({});
+  const [bookings, setBookings] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Update the convertApiResponse function to use the 'status' key
   const convertApiResponse = (apiData: any) => {
-    const converted: Record<string, string> = {};
+  const converted: Record<string, any> = {};
     if (apiData.booked_slots) {
       Object.values(apiData.booked_slots).forEach((slot: any) => {
         let startHour = slot.hour === 24 ? "00" : String(slot.hour).padStart(2, "0");
         let endHour = slot.hour === 24 ? "01" : String(slot.hour + 1).padStart(2, "0");
         const timeRange = `${startHour}:00 - ${endHour}:00`;
         const key = `${slot.date}_${timeRange}`;
-        converted[key] = slot.status; // Use the 'status' key directly
+  converted[key] = slot; // Store the whole slot object so booked name is available
       });
     }
     return converted;
@@ -128,7 +128,7 @@ const JadwalBooking = () => {
   const getBookingKey = (date: any, time: string) =>
     `${date.format("YYYY-MM-DD")}_${time}`;
   // Update the getBookingStatus function to return the status directly
-  const getBookingStatus = (date: any, time: string) => bookings[getBookingKey(date, time)];
+
 
   return (
     <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
@@ -379,10 +379,23 @@ const JadwalBooking = () => {
                     </td>
                     {dates.map((date) => {
                       // Update the logic to handle 'selesai' and 'belum bayar' statuses
-                      const bookingStatus = getBookingStatus(date, time);
+                      const bookingKey = getBookingKey(date, time);
+                      const bookingInfo = bookings[bookingKey];
+                      const bookingStatus = bookingInfo?.status;
                       const isSelesai = bookingStatus === "selesai";
                       const isBelumBayar = bookingStatus === "belum bayar";
-
+                      const bookedName = bookingInfo?.booked ?? "";
+                      let isBookedNameNumber = false;
+                      let bookedHarga = "";
+                      if (typeof bookedName === "number" || (!isNaN(Number(bookedName)) && bookedName !== "")) {
+                        isBookedNameNumber = true;
+                        const hargaNum = typeof bookedName === "number" ? bookedName : Number(bookedName);
+                        bookedHarga = `Rp ${hargaNum.toLocaleString("id-ID")}`;
+                      } else {
+                        bookedHarga = "";
+                      }
+                     
+                     
                       return (
                         <td
                           key={date.format("YYYY-MM-DD") + time}
@@ -390,7 +403,9 @@ const JadwalBooking = () => {
                         >
                           <div
                             className={`h-9 sm:h-10 md:h-12 flex items-center justify-center rounded-md text-[10px] sm:text-[11px] md:text-sm font-medium transition-all duration-200 shadow-sm ${
-                              isSelesai
+                              isBookedNameNumber
+                                ? "bg-green-500 hover:bg-green-600 text-white"
+                                : isSelesai
                                 ? "bg-red-500 hover:bg-red-600 text-white"
                                 : isBelumBayar
                                 ? "bg-yellow-500 hover:bg-yellow-600 text-white"
@@ -399,10 +414,12 @@ const JadwalBooking = () => {
                           >
                             <span className="font-semibold px-1">
                               {isSelesai
-                                ? "RESERVED"
+                                ? isBookedNameNumber
+                                  ? bookedHarga
+                                  : `RESERVED`
                                 : isBelumBayar
                                 ? ""
-                                : "KOSONG"}
+                                : `KOSONG`}
                             </span>
                           </div>
                         </td>

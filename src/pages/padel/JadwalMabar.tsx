@@ -15,7 +15,7 @@ interface Pivot {
 }
 
 interface Pemain {
-  nama: string;
+  booked: string;
   status: string;
   pivot: Pivot;
 }
@@ -339,27 +339,43 @@ const JadwalMabar = () => {
                           key={`${item.id}-${slotKey}`}
                           className="border-r border-b border-gray-200 dark:border-gray-600 p-1 sm:p-1.5 md:p-2"
                         >
-                          <div
-                            className={`h-9 sm:h-10 md:h-12 flex items-center justify-center rounded-md text-[10px] sm:text-[11px] md:text-sm font-medium transition-all duration-200 shadow-sm ${
-                              pemainInSlot
-                                ? pemainInSlot.status === "selesai"
-                                  ? "bg-red-500 hover:bg-red-600 text-white"
-                                  : pemainInSlot.status === "belum bayar"
-                                  ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                                  : "bg-green-500 hover:bg-green-600 text-white"
-                                : "bg-green-500 hover:bg-green-600 text-white"
-                            }`}
-                          >
-                            <span className="font-semibold px-1">
-                              {pemainInSlot
-                                ? pemainInSlot.status === "selesai"
-                                  ? "RESERVED"
-                                  : pemainInSlot.status === "belum bayar"
-                                  ? " "
-                                  : "KOSONG"
-                                : "KOSONG"}
-                            </span>
-                          </div>
+                          {(() => {
+                            if (!pemainInSlot) {
+                              return (
+                                <div className="h-9 sm:h-10 md:h-12 flex items-center justify-center rounded-md text-[10px] sm:text-[11px] md:text-sm font-medium transition-all duration-200 shadow-sm bg-green-500 hover:bg-green-600 text-white">
+                                  <span className="font-semibold px-1">KOSONG</span>
+                                </div>
+                              );
+                            }
+                            const bookedInt = parseInt(pemainInSlot.booked, 10);
+                            if (pemainInSlot.status === "selesai") {
+                              if (!isNaN(bookedInt)) {
+                                return (
+                                  <div className="h-9 sm:h-10 md:h-12 flex items-center justify-center rounded-md text-[10px] sm:text-[11px] md:text-sm font-medium transition-all duration-200 shadow-sm bg-green-500 hover:bg-green-600 text-white">
+                                    <span className="font-semibold px-1">{`Rp${bookedInt.toLocaleString("id-ID")}`}</span>
+                                  </div>
+                                );
+                              } else {
+                                return (
+                                  <div className="h-9 sm:h-10 md:h-12 flex items-center justify-center rounded-md text-[10px] sm:text-[11px] md:text-sm font-medium transition-all duration-200 shadow-sm bg-red-500 hover:bg-red-600 text-white">
+                                    <span className="font-semibold px-1">{`RESERVED`}</span>
+                                  </div>
+                                );
+                              }
+                            } else if (pemainInSlot.status === "belum bayar") {
+                              return (
+                                <div className="h-9 sm:h-10 md:h-12 flex items-center justify-center rounded-md text-[10px] sm:text-[11px] md:text-sm font-medium transition-all duration-200 shadow-sm bg-yellow-500 hover:bg-yellow-600 text-white">
+                                  <span className="font-semibold px-1"></span>
+                                </div>
+                              );
+                            } else {
+                              return (
+                                <div className="h-9 sm:h-10 md:h-12 flex items-center justify-center rounded-md text-[10px] sm:text-[11px] md:text-sm font-medium transition-all duration-200 shadow-sm bg-green-500 hover:bg-green-600 text-white">
+                                  <span className="font-semibold px-1">KOSONG</span>
+                                </div>
+                              );
+                            }
+                          })()}
                         </td>
                       );
                     })}
