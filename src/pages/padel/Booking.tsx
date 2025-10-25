@@ -100,7 +100,7 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
     }
     try {
       const response = await axios.post(
-        "https://pilihotel.com/api/padel",
+        `${import.meta.env.VITE_API_URL}/padel`,
         {
           booked: booked,
           start_date: startDate,

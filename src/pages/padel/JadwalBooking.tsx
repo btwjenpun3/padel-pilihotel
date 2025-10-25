@@ -70,10 +70,10 @@ const JadwalBooking = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://pilihotel.com/api/padel");
-      // const response = await axios.get(
-      //   "http://pilihotel-booking.test/api/padel"
-      // );
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/padel`);
+   
+      
+   
       const convertedData = convertApiResponse(response.data);
 
       setBookings(convertedData);

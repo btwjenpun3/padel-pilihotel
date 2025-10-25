@@ -35,11 +35,12 @@ const JadwalMabar = () => {
   const [startDate, setStartDate] = React.useState<Date | null>(dayjs().toDate());
   const [endDate, setEndDate] = React.useState<Date | null>(dayjs().add(30, "day").toDate());
   const [loading, setLoading] = React.useState(false);
-console.log("Running Mode:", import.meta.env.MODE);
+
   const fetchData = async () => {
       setLoading(true);
     try {
-      const response = await axios.get(`https://pilihotel.com/api/padel-mabar`);
+
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/padel-mabar`);
    
       
 
@@ -265,7 +266,7 @@ console.log("Running Mode:", import.meta.env.MODE);
         {/* Booking Table Placeholder */}
         <div className="shadow-xl rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="overflow-x-auto scroll-smooth">
-            <table className="w-full min-w-[800px] border-collapse">
+            <table className="w-full min-w-0 sm:min-w-[800px] border-collapse">
               <thead>
                 <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600">
                   <th className="bg-orange-500 text-white py-2 sm:py-3 px-2 sm:px-4 text-center sticky left-0 z-20 min-w-[90px] sm:min-w-[120px] border-r border-orange-400 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">
