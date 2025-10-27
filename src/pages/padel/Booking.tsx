@@ -39,7 +39,7 @@ const timeOptions: Record<number, string> = {
 
 
 
-const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, kategori: string }) => {
+const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kategori: string }) => {
   // Fungsi untuk mengumpulkan index slot yang bentrok
   const getDuplicateIndices = (dates: string[], slots: number[]) => {
     const slotPairs = dates.map((date, idx) => ({ date, hour: slots[idx] }));
@@ -56,17 +56,17 @@ const Booking = ({ fetchBookings,kategori }: { fetchBookings: () => void, katego
     return Array.from(new Set(duplicates));
   };
   const [startDates, setStartDates] = useState<string[]>([dayjs().format("YYYY-MM-DD")]);
-  const [timeSlots, setTimeSlots] = useState<number[]>([5]);
+  const [timeSlots, setTimeSlots] = useState<number[]>([]);
   const [booked, setBooked] = useState<string>("");
   const [nama_rekening, setNama_Rekening] = useState<string>("");
-  
 
-const [errors, setErrors] = useState<{
-  booked?: string;
-  startDate?: string;
-  timeSlot?: string[]; // ✅ Ubah jadi array
-  nama_rekening?: string;
-}>({});
+
+  const [errors, setErrors] = useState<{
+    booked?: string;
+    startDate?: string;
+    timeSlot?: string[]; // ✅ Ubah jadi array
+    nama_rekening?: string;
+  }>({});
   // Removed unused state setter
   const [availableSlots] = useState<Record<number, string>>(timeOptions);
 
@@ -143,13 +143,13 @@ const [errors, setErrors] = useState<{
       return;
     }
 
-    if(kategori === "coaching"){
+    if (kategori === "coaching") {
       kategori = "coaching";
-    }else{
+    } else {
       kategori = "court";
     }
 
-    
+
     const timeSlotData = startDates.map((date, i) => ({
       date,
       time_slot: timeSlots[i],
@@ -178,15 +178,15 @@ const [errors, setErrors] = useState<{
         title: "Booking berhasil!",
         text: "Slot waktu Anda telah berhasil dibooking.",
       });
-      
+
       // Refresh data booking
       fetchBookings();
 
-  // ✅ Reset semua input setelah sukses
-  setBooked("");
-  setStartDates([dayjs().format("YYYY-MM-DD")]);
-  setTimeSlots([5]);
-  setNama_Rekening("");
+      // ✅ Reset semua input setelah sukses
+      setBooked("");
+      setStartDates([dayjs().format("YYYY-MM-DD")]);
+      setTimeSlots([5]);
+      setNama_Rekening("");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
         const conflicts = error.response.data.conflicts || [];
@@ -216,7 +216,7 @@ const [errors, setErrors] = useState<{
         return;
       }
 
-  
+
 
       Swal.fire({
         icon: "error",
@@ -288,11 +288,10 @@ const [errors, setErrors] = useState<{
                 setErrors((prev) => ({ ...prev, booked: undefined }));
               }
             }}
-            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
-              errors.booked
-                ? "border-red-500  dark:bg-red-900/20"
-                : "border-gray-300"
-            }`}
+            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${errors.booked
+              ? "border-red-500  dark:bg-red-900/20"
+              : "border-gray-300"
+              }`}
           />
           {errors.booked && (
             <p className="text-sm text-red-500 mt-1">{errors.booked}</p>
@@ -319,11 +318,10 @@ const [errors, setErrors] = useState<{
                   }
                 }}
                 dateFormat="yyyy-MM-dd"
-                className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
-                  errors.startDate
-                    ? "border-red-500  dark:bg-red-900/20"
-                    : "border-gray-300"
-                }`}
+                className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${errors.startDate
+                  ? "border-red-500  dark:bg-red-900/20"
+                  : "border-gray-300"
+                  }`}
               />
             </div>
             <div className="w-1/2 md:flex-4 ml-2 flex flex-col justify-end min-h-[56px]">
@@ -344,12 +342,12 @@ const [errors, setErrors] = useState<{
                       setErrors((prev) => ({ ...prev, timeSlot: newErr }));
                     }
                   }}
-                  className={`block w-full px-3 py-2 mt-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
-                    errors.timeSlot && errors.timeSlot[idx]
-                      ? "border-red-500 dark:bg-red-900/20"
-                      : "border-gray-300"
-                  }`}
+                  className={`block w-full px-3 py-2 mt-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${errors.timeSlot && errors.timeSlot[idx]
+                    ? "border-red-500 dark:bg-red-900/20"
+                    : "border-gray-300"
+                    }`}
                 >
+                  <option value="">Pilih Jam</option>
                   {Object.entries(availableSlots).map(([key, label]) => (
                     <option key={key} value={Number(key)}>
                       {label}
@@ -418,11 +416,10 @@ const [errors, setErrors] = useState<{
                 setErrors((prev) => ({ ...prev, nama_rekening: undefined }));
               }
             }}
-            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
-              errors.nama_rekening
-                ? "border-red-500  dark:bg-red-900/20"
-                : "border-gray-300"
-            }`}
+            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${errors.nama_rekening
+              ? "border-red-500  dark:bg-red-900/20"
+              : "border-gray-300"
+              }`}
           />
           {errors.nama_rekening && (
             <p className="text-sm text-red-500 mt-1">{errors.nama_rekening}</p>
