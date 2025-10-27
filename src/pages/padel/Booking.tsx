@@ -394,7 +394,7 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
               const next = dayjs(last).add(1, "day").format("YYYY-MM-DD");
               return [...prev, next];
             });
-            setTimeSlots((prev) => [...prev, 5]);
+            setTimeSlots((prev) => [...prev, 0]);
           }}
           className=" mb-3 px-3 py-2 bg-green-600 text-white rounded-lg"
         >
