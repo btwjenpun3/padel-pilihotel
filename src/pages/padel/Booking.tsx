@@ -10,53 +10,56 @@ import { GiTennisCourt } from "react-icons/gi";
 import { IoWarning } from "react-icons/io5";
 
 dayjs.locale("id");
-const timeOptions: Record<number, string> = {
-  5: "05:00 - 06:00",
-  6: "06:00 - 07:00",
-  7: "07:00 - 08:00",
-  8: "08:00 - 09:00",
-  9: "09:00 - 10:00",
-  10: "10:00 - 11:00",
-  11: "11:00 - 12:00",
-  12: "12:00 - 13:00",
-  13: "13:00 - 14:00",
-  14: "14:00 - 15:00",
-  15: "15:00 - 16:00",
-  16: "16:00 - 17:00",
-  17: "17:00 - 18:00",
-  18: "18:00 - 19:00",
-  19: "19:00 - 20:00",
-  20: "20:00 - 21:00",
-  21: "21:00 - 22:00",
-  22: "22:00 - 23:00",
-  23: "23:00 - 24:00",
-  24: "00:00 - 01:00",
-  1: "01:00 - 02:00",
-  2: "02:00 - 03:00",
-  3: "03:00 - 04:00",
-  4: "04:00 - 05:00",
+const timeOptions: Record<string, string> = {
+  "5": "05:00 - 06:00",
+  "6": "06:00 - 07:00",
+  "7": "07:00 - 08:00",
+  "8": "08:00 - 09:00",
+  "9": "09:00 - 10:00",
+  "10": "10:00 - 11:00",
+  "11": "11:00 - 12:00",
+  "12": "12:00 - 13:00",
+  "13": "13:00 - 14:00",
+  "14": "14:00 - 15:00",
+  "15": "15:00 - 16:00",
+  "16": "16:00 - 17:00",
+  "17": "17:00 - 18:00",
+  "18": "18:00 - 19:00",
+  "19": "19:00 - 20:00",
+  "20": "20:00 - 21:00",
+  "21": "21:00 - 22:00",
+  "22": "22:00 - 23:00",
+  "23": "23:00 - 24:00",
+  "24": "00:00 - 01:00",
+  "1": "01:00 - 02:00",
+  "2": "02:00 - 03:00",
+  "3": "03:00 - 04:00",
+  "4": "04:00 - 05:00",
 };
-
-
 
 const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kategori: string }) => {
   // Fungsi untuk mengumpulkan index slot yang bentrok
-  const getDuplicateIndices = (dates: string[], slots: number[]) => {
+  const getDuplicateIndices = (dates: string[], slots: string[]) => {
+    // slots sekarang string ("" jika belum dipilih)
     const slotPairs = dates.map((date, idx) => ({ date, hour: slots[idx] }));
     const duplicates: number[] = [];
     for (let i = 0; i < slotPairs.length; i++) {
       const isDuplicate = slotPairs.filter(
-        (slot, idx) => slot.date === slotPairs[i].date && slot.hour === slotPairs[i].hour && idx !== i
+        (slot, idx) =>
+          slot.date === slotPairs[i].date &&
+          slot.hour !== "" &&
+          slot.hour === slotPairs[i].hour &&
+          idx !== i
       ).length > 0;
       if (isDuplicate) {
         duplicates.push(i);
       }
     }
-    // Hilangkan duplikat index
     return Array.from(new Set(duplicates));
   };
   const [startDates, setStartDates] = useState<string[]>([dayjs().format("YYYY-MM-DD")]);
-  const [timeSlots, setTimeSlots] = useState<number[]>([]);
+  // <-- CHANGED: timeSlots sebagai string[] dan inisialisasi satu entri kosong supaya sinkron dengan startDates
+  const [timeSlots, setTimeSlots] = useState<string[]>([""]);
   const [booked, setBooked] = useState<string>("");
   const [nama_rekening, setNama_Rekening] = useState<string>("");
 
@@ -68,7 +71,7 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
     nama_rekening?: string;
   }>({});
   // Removed unused state setter
-  const [availableSlots] = useState<Record<number, string>>(timeOptions);
+  const [availableSlots] = useState<Record<string, string>>(timeOptions);
 
   // Add SweetAlert confirmation before submitting
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,13 +83,20 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
       newErrors.booked = "Nama pemesan tidak boleh hanya angka. Harus mengandung huruf.";
     }
     if (!startDates.length || startDates.some((d) => !d)) newErrors.startDate = "Tanggal main tidak boleh kosong";
-    if (!timeSlots.length || timeSlots.some((t) => !t)) newErrors.timeSlot = ["Jam tidak boleh kosong"];
 
-    // Cek duplikat tanggal dan jam
+    // <-- CHANGED: buat error per-slot jika jam kosong
     const slotErrorArr: string[] = Array(startDates.length).fill("");
+    startDates.forEach((_, idx) => {
+      if (!timeSlots[idx] || timeSlots[idx] === "") {
+        slotErrorArr[idx] = "Jam tidak boleh kosong";
+      }
+    });
+
+    // Cek duplikat tanggal dan jam (jika jam dipilih)
     const slotPairs: Record<string, number[]> = {};
     startDates.forEach((date, idx) => {
-      const key = `${date}-${timeSlots[idx]}`;
+      const hour = timeSlots[idx] === "" ? "" : timeSlots[idx];
+      const key = `${date}-${hour}`;
       if (!slotPairs[key]) slotPairs[key] = [];
       slotPairs[key].push(idx);
     });
@@ -97,7 +107,7 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
         });
       }
     });
-    // Kumpulkan index slot yang bentrok (fungsi lama)
+    // Kumpulkan index slot yang bentrok (fungsi lama yang sudah disesuaikan)
     const duplicateIndices = getDuplicateIndices(startDates, timeSlots);
     if (duplicateIndices.length > 0) {
       duplicateIndices.forEach(idx => {
@@ -125,10 +135,10 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
         `<p>Pastikan data booking Anda sudah benar:</p>` +
         `<ul style='margin-top:8px;'>` +
         startDates
-          .map(
-            (d, i) =>
-              `<li><b>Tanggal:</b> ${dayjs(d).format("DD MMM YYYY")} <b>Jam:</b> ${timeOptions[timeSlots[i]]}</li>`
-          )
+          .map((d, i) => {
+            const label = timeOptions[String(timeSlots[i])] ?? "";
+            return `<li><b>Tanggal:</b> ${dayjs(d).format("DD MMM YYYY")} <b>Jam:</b> ${label}</li>`;
+          })
           .join("") +
         `</ul>` +
         `<p style='margin-top:10px;'>Jika sudah yakin, klik <b>Ya, Pesan</b>.</p>` +
@@ -152,7 +162,8 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
 
     const timeSlotData = startDates.map((date, i) => ({
       date,
-      time_slot: timeSlots[i],
+      // <-- CHANGED: kirim hour sebagai number
+      time_slot: Number(timeSlots[i]),
     }));
 
     try {
@@ -185,7 +196,8 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
       // ✅ Reset semua input setelah sukses
       setBooked("");
       setStartDates([dayjs().format("YYYY-MM-DD")]);
-      setTimeSlots([5]);
+      // <-- CHANGED: reset timeSlots sinkron dengan startDates
+      setTimeSlots([""]);
       setNama_Rekening("");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
@@ -194,7 +206,7 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
         const updatedErrorSlots = Array(startDates.length).fill("");
         conflicts.forEach((c: { date: string; hour: number }) => {
           startDates.forEach((d, i) => {
-            if (d === c.date && timeSlots[i] === c.hour) {
+            if (d === c.date && Number(timeSlots[i]) === c.hour) {
               updatedErrorSlots[i] = "Slot ini bentrok. Pilih jadwal lain.";
             }
           });
@@ -204,7 +216,7 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
         const conflictList = conflicts
           .map(
             (c: { date: string; hour: number }) =>
-              `• ${dayjs(c.date).format("DD MMM YYYY")} - ${timeOptions[c.hour]}`
+              `• ${dayjs(c.date).format("DD MMM YYYY")} - ${timeOptions[String(c.hour)]}`
           )
           .join("<br>");
 
@@ -330,10 +342,11 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
               </label>
               <div className="flex items-center gap-2">
                 <select
-                  value={timeSlots[idx]}
+                  value={timeSlots[idx] ?? ""}
                   onChange={(e) => {
                     const updated = [...timeSlots];
-                    updated[idx] = Number(e.target.value);
+                    // <-- CHANGED: simpan sebagai string (key dari timeOptions)
+                    updated[idx] = e.target.value;
                     setTimeSlots(updated);
                     // Hapus error hanya pada slot yang diedit
                     if (errors.timeSlot && errors.timeSlot[idx]) {
@@ -349,7 +362,8 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
                 >
                   <option value="">Pilih Jam</option>
                   {Object.entries(availableSlots).map(([key, label]) => (
-                    <option key={key} value={Number(key)}>
+                    // <-- CHANGED: gunakan key sebagai value (string) agar konsisten dengan state
+                    <option key={key} value={key}>
                       {label}
                     </option>
                   ))}
@@ -394,7 +408,8 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
               const next = dayjs(last).add(1, "day").format("YYYY-MM-DD");
               return [...prev, next];
             });
-            setTimeSlots((prev) => [...prev, 0]);
+            // <-- CHANGED: tambahkan slot kosong saat menambah tanggal baru
+            setTimeSlots((prev) => [...prev, ""]);
           }}
           className=" mb-3 px-3 py-2 bg-green-600 text-white rounded-lg"
         >
