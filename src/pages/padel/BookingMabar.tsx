@@ -47,11 +47,11 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
     sessionErrors?: string[];
   }>({});
 
-  // Removed unused state setter
+
   const [availableSlots] = useState<Record<number, string>>(timeOptions);
 
 
-  // Add SweetAlert confirmation before submitting
+
     const handleAddSession = () => {
       setHariDipilih((prev) => [...prev, ""]);
     };
