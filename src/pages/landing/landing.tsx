@@ -134,7 +134,7 @@ const Landing = () => {
                   { text: "Senin - Minggu", bullet: true },
                   { text: "06:00 AM - 10:00 AM | 225k", bullet: false },
                   { text: "10:00 AM - 03:00 PM | 87k", bullet: false },
-                  { text: "03:00 pM - 11:00 AM | 225k", bullet: false },
+                  { text: "03:00 PM - 11:00 AM | 225k", bullet: false },
 
                   { text: "Sabtu - Minggu/ Holliday", bullet: false },
                   { text: "All Day | 285k", bullet: false },
