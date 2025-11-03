@@ -132,10 +132,12 @@ const Landing = () => {
                 link: "/booking/court",
                 features: [
                   { text: "Senin - Minggu", bullet: true },
-                  { text: "06:00 AM - 23:00 PM | 175k", bullet: false },
-                  { text: "Promo Happy Hour", bullet: true },
-                  { text: "Senin - Kamis", bullet: false },
-                  { text: "11:00 AM - 14:00 PM | 87k", bullet: false },
+                  { text: "06:00 AM - 10:00 AM | 225k", bullet: false },
+                  { text: "10:00 AM - 03:00 PM | 87k", bullet: false },
+                  { text: "03:00 pM - 11:00 AM | 225k", bullet: false },
+
+                  { text: "Sabtu - Minggu/ Holliday", bullet: false },
+                  { text: "All Day | 285k", bullet: false },
                 ],
               },
               {
@@ -173,24 +175,21 @@ const Landing = () => {
                 className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-transform hover:-translate-y-2 flex flex-col justify-between min-w-[250px]"
                 whileHover={{ scale: 1.02 }}
               >
-                <div className="p-6 text-center flex-1 flex flex-col justify-between">
+                <div className="p-6 text-center flex-1 flex flex-col">
                   <h4 className="text-xl font-semibold mb-2 text-gray-800">
                     {item.title}
                   </h4>
-                  {item.title === "Mabar All Level" ? (
-                    <p className="text-blue-600 font-bold text-2xl mb-16  ">
-                      {item.title !== "Mabar All Level" ? "Mulai Dari" : ""}
+
+                  {/* Teks "Mulai Dari" + Harga dengan tinggi tetap */}
+                  <div className="mb-4 min-h-[120px] flex flex-col justify-center">
+                    <p className="text-blue-600 font-bold text-2xl">
+                      Mulai Dari
                       <br />
                       {item.price}
                     </p>
-                  ) : (
-                    <p className="text-blue-600 font-bold text-2xl mb-4">
-                      {item.title !== "Mabar All Level" ? "Mulai Dari" : ""}
-                      <br />
-                      {item.price}
-                    </p>
-                  )}
-                  <ul className="text-gray-600 text-left space-y-2">
+                  </div>
+
+                  <ul className="text-gray-600 text-left space-y-2 flex-1">
                     {item.features.map((feature, index) => (
                       <li key={index} className="flex items-center">
                         {feature.bullet && (
