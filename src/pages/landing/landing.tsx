@@ -1,11 +1,22 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone,  CalendarDays, Instagram } from "lucide-react";
+import { MapPin, Phone, CalendarDays, Instagram } from "lucide-react";
 import { IoTennisballOutline } from "react-icons/io5";
-import padel1 from "/images/landing-page/lapangan/padel1.jpg"
+import padel1 from "/images/landing-page/lapangan/padel1.jpg";
 import padel2 from "/images/landing-page/lapangan/padel2.jpeg";
 import padel3 from "/images/landing-page/lapangan/padel3.jpeg";
 import padel4 from "/images/landing-page/lapangan/padel4.jpeg";
+import padel5 from "/images/landing-page/lapangan/padel5.jpeg";
+import padel6 from "/images/landing-page/lapangan/padel6.jpeg";
+import padel7 from "/images/landing-page/lapangan/padel7.jpeg";
+import padel8 from "/images/landing-page/lapangan/padel8.jpeg";
+import padel9 from "/images/landing-page/lapangan/padel9.jpeg";
+import padel10 from "/images/landing-page/lapangan/padel10.jpeg";
+import padel11 from "/images/landing-page/lapangan/padel11.jpeg";
+import padel12 from "/images/landing-page/lapangan/padel12.jpeg";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Navigation } from "swiper/modules";
+
 const Landing = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
 
@@ -22,11 +33,17 @@ const Landing = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-
   const images = [
-    padel4,
-    padel2,
-    padel3, // kanan bawah
+    { url: padel1, description: "Kindy Padel" },
+    { url: padel2, description: "Kindy Padel" },
+    { url: padel3, description: "Kindy Padel" },
+    { url: padel4, description: "Kindy Padel" },
+    { url: padel5, description: "Kindy Padel" },
+    { url: padel6, description: "Kindy Padel" },
+    { url: padel7, description: "Kindy Padel" },
+    { url: padel8, description: "Kindy Padel" },
+    { url: padel9, description: "Kindy Padel" },
+    { url: padel10, description: "Kindy Padel" },
   ];
 
   return (
@@ -206,49 +223,91 @@ const Landing = () => {
       <section className="bg-gray-50 py-16" id="gallery">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800">
-            Galery <span className="text-blue-600">Kindy Padel</span>
+            Galeri <span className="text-blue-600">Kindy Padel</span>
           </h2>
           <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
             Nikmati pengalaman bermain padel pertama di Depok dengan fasilitas
-            modern dan suasana yang eksklusif.
+            modern dan suasana eksklusif.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-            {/* Gambar kiri besar */}
-            <div className="md:col-span-2 relative overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300">
-              <img
-                src={images[0]}
-                alt="Lapangan Padel Kiri"
-                className="w-full h-[500px] object-cover hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                <p className="text-white font-semibold text-lg">
-                  Lapangan Utama
-                </p>
-              </div>
-            </div>
-
-            {/* Dua gambar kanan */}
-            <div className="flex flex-col gap-4">
-              {images.slice(1).map((url, index) => (
-                <div
-                  key={index}
-                  className="relative overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300"
-                >
+          <Swiper
+            modules={[Pagination, Navigation]}
+            spaceBetween={20}
+            slidesPerView={1}
+            pagination={{ clickable: true }}
+            navigation
+            loop={true}
+            breakpoints={{
+              640: { slidesPerView: 1 },
+              768: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+            className="rounded-2xl shadow-lg"
+          >
+            {images.map((item, index) => (
+              <SwiperSlide key={index}>
+                <div className="relative overflow-hidden rounded-2xl">
                   <img
-                    src={url}
-                    alt={`Lapangan Padel ${index + 2}`}
-                    className="w-full h-[240px] object-cover hover:scale-110 transition-transform duration-500"
+                    src={item.url}
+                    alt={`Lapangan ${index + 1}`}
+                    className="w-full h-[300px] sm:h-[400px] object-cover hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                    <p className="text-white font-semibold">
-                      Area {index === 0 ? "Samping" : "Indoor"}
+                    <p className="text-white font-semibold text-lg">
+                      {item.description}
                     </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          {/* Override style untuk tombol Swiper: lebih besar, background putih, ikon berwarna biru */}
+          <style>{`
+            /* ukuran & tampilan tombol */
+            .swiper-button-prev,
+            .swiper-button-next {
+              width: 26px;
+              height: 26px;
+              border-radius: 9999px;
+              background: #ffffff !important; /* background putih */
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 20px rgba(2,6,23,0.12);
+              z-index: 50;
+              transition: transform .15s ease, box-shadow .15s ease;
+            }
+            .swiper-button-prev:hover,
+            .swiper-button-next:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 12px 30px rgba(2,6,23,0.14);
+            }
+
+            /* ukuran icon panah */
+            .swiper-button-prev::after,
+            .swiper-button-next::after {
+              font-size: 20px;
+              color: #1e40af; /* biru agar kontras terhadap background putih */
+            }
+
+            /* posisi tombol lebih ke dalam (opsional tweak) */
+            .swiper-button-prev { left: 8px; }
+            .swiper-button-next { right: 8px; }
+
+            /* responsive: sedikit lebih kecil di layar kecil */
+            @media (max-width: 640px) {
+              .swiper-button-prev,
+              .swiper-button-next {
+                width: 26px;
+                height: 26px;
+              }
+              .swiper-button-prev::after,
+              .swiper-button-next::after {
+                font-size: 18px;
+              }
+            }
+          `}</style>
         </div>
       </section>
 

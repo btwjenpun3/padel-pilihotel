@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 import dayjs from "dayjs";
@@ -29,8 +29,13 @@ interface HariAvailable {
   jam: string;
 }
 
-
-const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,HariAvailable: HariAvailable[] }) => {
+const BookingMabar = ({
+  JadwalBooking,
+  HariAvailable,
+}: {
+  JadwalBooking: any;
+  HariAvailable: HariAvailable[];
+}) => {
   const [hariDipilih, setHariDipilih] = useState<string[]>([""]);
   const [timeSlot, setTimeSlot] = useState<number>(1);
   const [booked, setBooked] = useState<string>("");
@@ -50,22 +55,16 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
   // Removed unused state setter
   const [availableSlots] = useState<Record<number, string>>(timeOptions);
 
-
   // Add SweetAlert confirmation before submitting
-    const handleAddSession = () => {
-      setHariDipilih((prev) => [...prev, ""]);
-    };
+  const handleAddSession = () => {
+    setHariDipilih((prev) => [...prev, ""]);
+  };
 
-      const handleSessionChange = (index: number, value: string) => {
-        const updated = [...hariDipilih];
-        updated[index] = value;
-        setHariDipilih(updated);
-      };
-
-
- 
-
-
+  const handleSessionChange = (index: number, value: string) => {
+    const updated = [...hariDipilih];
+    updated[index] = value;
+    setHariDipilih(updated);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,7 +139,6 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
         }
       );
 
-
       Swal.fire({
         icon: "success",
         title: "Booking berhasil!",
@@ -152,7 +150,7 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
 
       // ✅ Reset semua input setelah sukses
       setBooked("");
-        setHariDipilih([""]);
+      setHariDipilih([""]);
       setTimeSlot(5);
       setNama_Rekening("");
     } catch (error) {
@@ -160,14 +158,22 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
         const conflicts = error.response?.data.conflicts || [];
         // Map conflicts to session input errors
         const sessionErrors = Array(hariDipilih.length).fill("");
-        conflicts.forEach((conflict: { id_hari: string; slot: number; message: string }) => {
-          hariDipilih.forEach((id, idx) => {
-            if (String(id) === String(conflict.id_hari)) {
-              sessionErrors[idx] = conflict.message || "Slot sudah dibooking. Pilih session lain.";
-            }
-          });
-        });
-        setErrors((prev: any) => ({ ...prev, hariDipilih: undefined, sessionErrors }));
+        conflicts.forEach(
+          (conflict: { id_hari: string; slot: number; message: string }) => {
+            hariDipilih.forEach((id, idx) => {
+              if (String(id) === String(conflict.id_hari)) {
+                sessionErrors[idx] =
+                  conflict.message ||
+                  "Slot sudah dibooking. Pilih session lain.";
+              }
+            });
+          }
+        );
+        setErrors((prev: any) => ({
+          ...prev,
+          hariDipilih: undefined,
+          sessionErrors,
+        }));
 
         Swal.fire({
           icon: "error",
@@ -177,9 +183,11 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
             conflicts
               .map(
                 (c: { id_hari: string; slot: number; message: string }) =>
-                  `• Session ID: ${c.id_hari} - Player: ${timeOptions[c.slot]}<br>${c.message}`
+                  `• Session ID: ${c.id_hari} - Player: ${
+                    timeOptions[c.slot]
+                  }<br>${c.message}`
               )
-              .join("<br>")
+              .join("<br>"),
         });
         return;
       }
@@ -214,7 +222,10 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
             cancel/refund/reschedule.
           </li>
           <li>Pembayaran melalui transfer BCA 6375058549 Bilal Edwan.</li>
-          <li>Rp 75.000 / Player / Session. Jika 2 Session Maka Rp 150.000 / Player dst.</li>
+          <li>
+            Rp 75.000 / Player / Session. Jika 2 Session Maka Rp 150.000 /
+            Player dst.
+          </li>
           <li>1 Session adalah 1 Jam.</li>
           <li>Pembayaran Maksimal 15 menit setelah melakukan booking.</li>
           <li>
@@ -275,7 +286,8 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
           <div className="mb-4 flex items-center gap-2" key={index}>
             <div className="flex-1">
               <label className="block mb-2 text-gray-700 dark:text-gray-300">
-                Pilih Session Tersedia {hariDipilih.length > 1 ? `(${index + 1})` : ""}
+                Pilih Session Tersedia{" "}
+                {hariDipilih.length > 1 ? `(${index + 1})` : ""}
               </label>
               <select
                 value={selectedHari}
@@ -289,13 +301,16 @@ const BookingMabar = ({ JadwalBooking,HariAvailable }: { JadwalBooking: any,Hari
                 <option value="">Pilih Session Tersedia</option>
                 {HariAvailable.map((hari) => (
                   <option key={hari.id} value={hari.id}>
-                    {dayjs(hari.tanggal).format("dddd, DD MMMM YYYY")} - {hari.jam}
+                    {dayjs(hari.tanggal).format("dddd, DD MMMM YYYY")} -{" "}
+                    {hari.jam}
                   </option>
                 ))}
               </select>
               {/* Error hanya pada session yang bentrok */}
               {errors.sessionErrors && errors.sessionErrors[index] && (
-                <p className="text-sm text-red-500 mt-1">{errors.sessionErrors[index]}</p>
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.sessionErrors[index]}
+                </p>
               )}
             </div>
             {hariDipilih.length > 1 && (
