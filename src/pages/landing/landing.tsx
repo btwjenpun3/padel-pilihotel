@@ -44,6 +44,8 @@ const Landing = () => {
     { url: padel8, description: "Kindy Padel" },
     { url: padel9, description: "Kindy Padel" },
     { url: padel10, description: "Kindy Padel" },
+    { url: padel11, description: "Kindy Padel" },
+    { url: padel12, description: "Kindy Padel" },
   ];
 
   return (
