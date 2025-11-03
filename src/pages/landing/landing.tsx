@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone,  CalendarDays, Instagram } from "lucide-react";
+import { MapPin, Phone, CalendarDays, Instagram } from "lucide-react";
 import { IoTennisballOutline } from "react-icons/io5";
-import padel1 from "/images/landing-page/lapangan/padel1.jpg"
+import padel1 from "/images/landing-page/lapangan/padel1.jpg";
 import padel2 from "/images/landing-page/lapangan/padel2.jpeg";
 import padel3 from "/images/landing-page/lapangan/padel3.jpeg";
 import padel4 from "/images/landing-page/lapangan/padel4.jpeg";
@@ -16,7 +16,6 @@ import padel11 from "/images/landing-page/lapangan/padel11.jpeg";
 import padel12 from "/images/landing-page/lapangan/padel12.jpeg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper/modules";
-
 
 const Landing = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -34,18 +33,17 @@ const Landing = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-
   const images = [
-    { url: padel1, description: "Lapangan Utama" },
-    { url: padel2, description: "Area Samping" },
-    { url: padel3, description: "Area Indoor" },
-    { url: padel4, description: "Lapangan Outdoor" },
-    { url: padel5, description: "Fasilitas Modern" },
-    { url: padel6, description: "Pencahayaan Profesional" },
-    { url: padel7, description: "Ruang Ganti Nyaman" },
-    { url: padel8, description: "Lounge Area" },
-    { url: padel9, description: "Coffee Corner" },
-    { url: padel10, description: "Area Bermain" },
+    { url: padel1, description: "Kindy Padel" },
+    { url: padel2, description: "Kindy Padel" },
+    { url: padel3, description: "Kindy Padel" },
+    { url: padel4, description: "Kindy Padel" },
+    { url: padel5, description: "Kindy Padel" },
+    { url: padel6, description: "Kindy Padel" },
+    { url: padel7, description: "Kindy Padel" },
+    { url: padel8, description: "Kindy Padel" },
+    { url: padel9, description: "Kindy Padel" },
+    { url: padel10, description: "Kindy Padel" },
   ];
 
   return (
@@ -228,8 +226,8 @@ const Landing = () => {
             Galeri <span className="text-blue-600">Kindy Padel</span>
           </h2>
           <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
-            Nikmati pengalaman bermain padel pertama di Depok dengan fasilitas modern
-            dan suasana eksklusif.
+            Nikmati pengalaman bermain padel pertama di Depok dengan fasilitas
+            modern dan suasana eksklusif.
           </p>
 
           <Swiper
@@ -263,6 +261,53 @@ const Landing = () => {
               </SwiperSlide>
             ))}
           </Swiper>
+
+          {/* Override style untuk tombol Swiper: lebih besar, background putih, ikon berwarna biru */}
+          <style>{`
+            /* ukuran & tampilan tombol */
+            .swiper-button-prev,
+            .swiper-button-next {
+              width: 26px;
+              height: 26px;
+              border-radius: 9999px;
+              background: #ffffff !important; /* background putih */
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 8px 20px rgba(2,6,23,0.12);
+              z-index: 50;
+              transition: transform .15s ease, box-shadow .15s ease;
+            }
+            .swiper-button-prev:hover,
+            .swiper-button-next:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 12px 30px rgba(2,6,23,0.14);
+            }
+
+            /* ukuran icon panah */
+            .swiper-button-prev::after,
+            .swiper-button-next::after {
+              font-size: 20px;
+              color: #1e40af; /* biru agar kontras terhadap background putih */
+            }
+
+            /* posisi tombol lebih ke dalam (opsional tweak) */
+            .swiper-button-prev { left: 8px; }
+            .swiper-button-next { right: 8px; }
+
+            /* responsive: sedikit lebih kecil di layar kecil */
+            @media (max-width: 640px) {
+              .swiper-button-prev,
+              .swiper-button-next {
+                width: 26px;
+                height: 26px;
+              }
+              .swiper-button-prev::after,
+              .swiper-button-next::after {
+                font-size: 18px;
+              }
+            }
+          `}</style>
         </div>
       </section>
 
