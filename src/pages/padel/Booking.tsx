@@ -37,32 +37,40 @@ const timeOptions: Record<string, string> = {
   "4": "04:00 - 05:00",
 };
 
-const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kategori: string }) => {
+const Booking = ({
+  fetchBookings,
+  kategori,
+}: {
+  fetchBookings: () => void;
+  kategori: string;
+}) => {
   // Fungsi untuk mengumpulkan index slot yang bentrok
   const getDuplicateIndices = (dates: string[], slots: string[]) => {
     // slots sekarang string ("" jika belum dipilih)
     const slotPairs = dates.map((date, idx) => ({ date, hour: slots[idx] }));
     const duplicates: number[] = [];
     for (let i = 0; i < slotPairs.length; i++) {
-      const isDuplicate = slotPairs.filter(
-        (slot, idx) =>
-          slot.date === slotPairs[i].date &&
-          slot.hour !== "" &&
-          slot.hour === slotPairs[i].hour &&
-          idx !== i
-      ).length > 0;
+      const isDuplicate =
+        slotPairs.filter(
+          (slot, idx) =>
+            slot.date === slotPairs[i].date &&
+            slot.hour !== "" &&
+            slot.hour === slotPairs[i].hour &&
+            idx !== i
+        ).length > 0;
       if (isDuplicate) {
         duplicates.push(i);
       }
     }
     return Array.from(new Set(duplicates));
   };
-  const [startDates, setStartDates] = useState<string[]>([dayjs().format("YYYY-MM-DD")]);
+  const [startDates, setStartDates] = useState<string[]>([
+    dayjs().format("YYYY-MM-DD"),
+  ]);
   // <-- CHANGED: timeSlots sebagai string[] dan inisialisasi satu entri kosong supaya sinkron dengan startDates
   const [timeSlots, setTimeSlots] = useState<string[]>([""]);
   const [booked, setBooked] = useState<string>("");
   const [nama_rekening, setNama_Rekening] = useState<string>("");
-
 
   const [errors, setErrors] = useState<{
     booked?: string;
@@ -80,9 +88,11 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
     if (!booked.trim()) {
       newErrors.booked = "Nama pemesan tidak boleh kosong";
     } else if (/^\d+$/.test(booked.trim())) {
-      newErrors.booked = "Nama pemesan tidak boleh hanya angka. Harus mengandung huruf.";
+      newErrors.booked =
+        "Nama pemesan tidak boleh hanya angka. Harus mengandung huruf.";
     }
-    if (!startDates.length || startDates.some((d) => !d)) newErrors.startDate = "Tanggal main tidak boleh kosong";
+    if (!startDates.length || startDates.some((d) => !d))
+      newErrors.startDate = "Tanggal main tidak boleh kosong";
 
     // <-- CHANGED: buat error per-slot jika jam kosong
     const slotErrorArr: string[] = Array(startDates.length).fill("");
@@ -100,18 +110,20 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
       if (!slotPairs[key]) slotPairs[key] = [];
       slotPairs[key].push(idx);
     });
-    Object.values(slotPairs).forEach(indices => {
+    Object.values(slotPairs).forEach((indices) => {
       if (indices.length > 1) {
-        indices.forEach(idx => {
-          slotErrorArr[idx] = "Tanggal & jam tidak boleh sama persis dengan input lain.";
+        indices.forEach((idx) => {
+          slotErrorArr[idx] =
+            "Tanggal & jam tidak boleh sama persis dengan input lain.";
         });
       }
     });
     // Kumpulkan index slot yang bentrok (fungsi lama yang sudah disesuaikan)
     const duplicateIndices = getDuplicateIndices(startDates, timeSlots);
     if (duplicateIndices.length > 0) {
-      duplicateIndices.forEach(idx => {
-        slotErrorArr[idx] = "Slot ini bentrok dengan input lain. Pilih jadwal berbeda.";
+      duplicateIndices.forEach((idx) => {
+        slotErrorArr[idx] =
+          "Slot ini bentrok dengan input lain. Pilih jadwal berbeda.";
       });
     }
     if (slotErrorArr.some((err) => err)) {
@@ -121,7 +133,10 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
       newErrors.nama_rekening = "Nama rekening pengirim tidak boleh kosong";
 
     // Jika ada error bentrok antar input, hentikan proses submit
-    if ((newErrors.timeSlot && newErrors.timeSlot.some((err: string) => err)) || Object.keys(newErrors).length > 0) {
+    if (
+      (newErrors.timeSlot && newErrors.timeSlot.some((err: string) => err)) ||
+      Object.keys(newErrors).length > 0
+    ) {
       setErrors(newErrors);
       return;
     }
@@ -137,7 +152,9 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
         startDates
           .map((d, i) => {
             const label = timeOptions[String(timeSlots[i])] ?? "";
-            return `<li><b>Tanggal:</b> ${dayjs(d).format("DD MMM YYYY")} <b>Jam:</b> ${label}</li>`;
+            return `<li><b>Tanggal:</b> ${dayjs(d).format(
+              "DD MMM YYYY"
+            )} <b>Jam:</b> ${label}</li>`;
           })
           .join("") +
         `</ul>` +
@@ -158,7 +175,6 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
     } else {
       kategori = "court";
     }
-
 
     const timeSlotData = startDates.map((date, i) => ({
       date,
@@ -216,7 +232,9 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
         const conflictList = conflicts
           .map(
             (c: { date: string; hour: number }) =>
-              `• ${dayjs(c.date).format("DD MMM YYYY")} - ${timeOptions[String(c.hour)]}`
+              `• ${dayjs(c.date).format("DD MMM YYYY")} - ${
+                timeOptions[String(c.hour)]
+              }`
           )
           .join("<br>");
 
@@ -227,8 +245,6 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
         });
         return;
       }
-
-
 
       Swal.fire({
         icon: "error",
@@ -271,6 +287,33 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
             tidak di refund dan tidak bisa di reschedule.
           </li>
           <li>
+            Untuk sewa raket apabila sudah melakukan payment maka tidak bisa
+            cancel/refund atau reschedule dengan alasan apapun.
+          </li>
+          <li>
+            Segala Kerusakan Property di kindy padel akan menjadi tanggung jawab
+            pemain.
+          </li>
+          <li>Pembayaran melalui transfer BCA 6375058549 Bilal Edwan.</li>
+        </ul>
+        {/* 
+        <ul className="list-disc pl-5 space-y-2">
+          <li>
+            Apabila sudah melakukan payment maka tidak bisa melakukan
+            cancel/refund.
+          </li>
+          <li>
+            Untuk jadwal yang sudah di reservasi tidak bisa di reschedule.
+          </li>
+          <li>
+            Jika turun hujan sebelum sesi dimulai, maka jadwal bisa di
+            reschedule.
+          </li>
+          <li>
+            Jika sesi sudah berjalan lebih dari 30 menit & terjadi hujan, fee
+            tidak di refund dan tidak bisa di reschedule.
+          </li>
+          <li>
             Segala kerusakan properti di Kindy Padel akan menjadi tanggung jawab
             pemain.
           </li>
@@ -281,7 +324,7 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
             @KindyPadel.
           </li>
           <li>Pembayaran melalui transfer BCA 6375058549 Bilal Edwan.</li>
-        </ul>
+        </ul> */}
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -300,10 +343,11 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
                 setErrors((prev) => ({ ...prev, booked: undefined }));
               }
             }}
-            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${errors.booked
-              ? "border-red-500  dark:bg-red-900/20"
-              : "border-gray-300"
-              }`}
+            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+              errors.booked
+                ? "border-red-500  dark:bg-red-900/20"
+                : "border-gray-300"
+            }`}
           />
           {errors.booked && (
             <p className="text-sm text-red-500 mt-1">{errors.booked}</p>
@@ -330,10 +374,11 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
                   }
                 }}
                 dateFormat="yyyy-MM-dd"
-                className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${errors.startDate
-                  ? "border-red-500  dark:bg-red-900/20"
-                  : "border-gray-300"
-                  }`}
+                className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+                  errors.startDate
+                    ? "border-red-500  dark:bg-red-900/20"
+                    : "border-gray-300"
+                }`}
               />
             </div>
             <div className="w-1/2 md:flex-4 ml-2 flex flex-col justify-end min-h-[56px]">
@@ -355,10 +400,11 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
                       setErrors((prev) => ({ ...prev, timeSlot: newErr }));
                     }
                   }}
-                  className={`block w-full px-3 py-2 mt-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${errors.timeSlot && errors.timeSlot[idx]
-                    ? "border-red-500 dark:bg-red-900/20"
-                    : "border-gray-300"
-                    }`}
+                  className={`block w-full px-3 py-2 mt-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+                    errors.timeSlot && errors.timeSlot[idx]
+                      ? "border-red-500 dark:bg-red-900/20"
+                      : "border-gray-300"
+                  }`}
                 >
                   <option value="">Pilih Jam</option>
                   {Object.entries(availableSlots).map(([key, label]) => (
@@ -391,7 +437,9 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
               </div>
               {/* Error hanya pada slot yang bentrok */}
               {errors.timeSlot && errors.timeSlot[idx] && (
-                <p className="text-sm text-red-500 mt-2">{errors.timeSlot[idx]}</p>
+                <p className="text-sm text-red-500 mt-2">
+                  {errors.timeSlot[idx]}
+                </p>
               )}
             </div>
           </div>
@@ -431,10 +479,11 @@ const Booking = ({ fetchBookings, kategori }: { fetchBookings: () => void, kateg
                 setErrors((prev) => ({ ...prev, nama_rekening: undefined }));
               }
             }}
-            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${errors.nama_rekening
-              ? "border-red-500  dark:bg-red-900/20"
-              : "border-gray-300"
-              }`}
+            className={`block w-full px-3 py-2 rounded-md dark:bg-gray-700 dark:text-gray-100 border ${
+              errors.nama_rekening
+                ? "border-red-500  dark:bg-red-900/20"
+                : "border-gray-300"
+            }`}
           />
           {errors.nama_rekening && (
             <p className="text-sm text-red-500 mt-1">{errors.nama_rekening}</p>
