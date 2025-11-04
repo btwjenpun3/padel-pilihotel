@@ -279,7 +279,7 @@ const Booking = ({
             Untuk jadwal yang sudah di reservasi tidak bisa di reschedule.
           </li>
           <li>
-            Jika turun hujan sebelum sesi dimulai, maka jadwal bisa di
+            Jika turun hujan di jam sesi dimulai, maka jadwal bisa di
             reschedule.
           </li>
           <li>
